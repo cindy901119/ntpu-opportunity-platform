@@ -19,6 +19,7 @@ const deadlineFilters: DeadlineFilter[] = ["三天內", "一週內", "一個月�
 const rewardTypes: RewardType[] = ["獎金", "獎品", "證書", "補助", "無明確獎勵", "未寫清楚"];
 type ArrayPreferenceKey = "interests" | "skills" | "preferredOpportunityTypes" | "topicAreas" | "deadlineFilters" | "rewardTypes" | "preferredSubmissionTypes" | "highlightTags";
 const PRIZE_AMOUNT_LIMIT = 100000;
+const PRIZE_AMOUNT_STEP = 1000;
 const primarySubmissionTypes = ["申請表", "證明文件", "企劃書", "簡報", "影片"];
 const moreSubmissionTypes = ["短文", "作品集", "程式／Demo"];
 const highlightTags = ["北大限定", "北聯大限定", "可個人參加", "可組隊", "線上繳交"];
@@ -73,21 +74,19 @@ export function PreferencesClient() {
       ...current,
       profile: {
         ...current.profile,
-        ...(key === "school" ? { majorDepartment: getDepartmentsForSchool(value)[0] ?? "" } : {}),
+        ...(key === "school"
+          ? {
+              majorDepartment: getDepartmentsForSchool(value)[0] ?? "",
+              doubleMajorDepartment: "",
+              minorDepartment: "",
+            }
+          : {}),
         [key]: value,
       },
     }));
   }
 
   function updateArray(key: ArrayPreferenceKey, value: string[]) {
-    setSaved(false);
-    setForm((current) => ({
-      ...current,
-      [key]: value,
-    }));
-  }
-
-  function updateNumber(key: keyof Pick<UserPreferences, "maxPrizeAmount">, value: number) {
     setSaved(false);
     setForm((current) => ({
       ...current,
@@ -168,19 +167,17 @@ export function PreferencesClient() {
 
           {!isGraduate ? (
             <>
-              <SelectField
+              <OptionalDepartmentField
                 label="雙主修"
                 value={form.profile.doubleMajorDepartment ?? ""}
-                options={["", ...departments]}
+                options={departments}
                 onChange={(value) => updateProfile("doubleMajorDepartment", value)}
-                emptyLabel="沒有或暫不填"
               />
-              <SelectField
+              <OptionalDepartmentField
                 label="輔系"
                 value={form.profile.minorDepartment ?? ""}
-                options={["", ...departments]}
+                options={departments}
                 onChange={(value) => updateProfile("minorDepartment", value)}
-                emptyLabel="沒有或暫不填"
               />
             </>
           ) : (
@@ -213,6 +210,7 @@ export function PreferencesClient() {
             min={prizeMin}
             max={prizeMax}
             limit={PRIZE_AMOUNT_LIMIT}
+            step={PRIZE_AMOUNT_STEP}
             unlimited={prizeUnlimited}
             onUnlimitedChange={setPrizeUnlimited}
             onChange={updatePrizeRange}
@@ -292,6 +290,7 @@ function PrizeRangeField({
   min,
   max,
   limit,
+  step,
   unlimited,
   onUnlimitedChange,
   onChange,
@@ -299,6 +298,7 @@ function PrizeRangeField({
   min: number;
   max: number;
   limit: number;
+  step: number;
   unlimited: boolean;
   onUnlimitedChange: (checked: boolean) => void;
   onChange: (min: number, max: number) => void;
@@ -328,7 +328,7 @@ function PrizeRangeField({
             type="range"
             min={0}
             max={limit}
-            step={5000}
+            step={step}
             value={min}
             disabled={unlimited}
             onChange={(event) => onChange(Number(event.target.value), max)}
@@ -341,7 +341,7 @@ function PrizeRangeField({
             type="range"
             min={0}
             max={limit}
-            step={5000}
+            step={step}
             value={max}
             disabled={unlimited}
             onChange={(event) => onChange(min, Number(event.target.value))}
@@ -350,6 +350,54 @@ function PrizeRangeField({
         </label>
       </div>
     </fieldset>
+  );
+}
+
+function OptionalDepartmentField({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+}) {
+  const enabled = value.length > 0;
+
+  function toggle(checked: boolean) {
+    onChange(checked ? options[0] ?? "" : "");
+  }
+
+  return (
+    <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-3">
+      <label className="flex items-center justify-between gap-3">
+        <span className="text-sm font-semibold text-[var(--text)]">{label}</span>
+        <span className="flex items-center gap-2 text-sm font-semibold text-[var(--muted)]">
+          <input
+            type="checkbox"
+            checked={enabled}
+            onChange={(event) => toggle(event.target.checked)}
+            className="h-4 w-4 accent-[var(--action)]"
+          />
+          {enabled ? "有" : "沒有"}
+        </span>
+      </label>
+      {enabled ? (
+        <select
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="mt-3 w-full rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-3 py-3 text-sm font-bold text-[var(--text)]"
+        >
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      ) : null}
+    </div>
   );
 }
 
