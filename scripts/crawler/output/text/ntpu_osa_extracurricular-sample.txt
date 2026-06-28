@@ -1,0 +1,9 @@
+sourceKey: ntpu_osa_extracurricular
+sourceName: 國立臺北大學學務處課外組公告
+title: 114-2學期「亞德客有美公益活動經費補助」即日起受理申請至115/5/11（一）止。
+url: https://new.ntpu.edu.tw/osa/news?tag=%E8%AA%B2%E5%A4%96%E7%B5%84,%E8%AA%B2%E6%8C%87%E7%B5%84&title=%E8%AA%B2%E5%A4%96%E7%B5%84
+postedDate: 2026-04-09
+contentHash: 85676480eaa05758599c594ecef9673bd0adbe21a13e2168d19a901ef6275aed
+matchedKeywords: 補助, 申請
+
+114-2學期「亞德客有美公益活動經費補助」即日起受理申請至115/5/11（一）止，標題包含經費補助與受理申請，適合作為補助／計畫公告爬蟲樣本。實際重跑爬蟲時會進入公告內頁抓取 raw_text。
