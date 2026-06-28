@@ -1,5 +1,12 @@
 # PRODUCT_DECISIONS
 
+## v0.8-D 北大系所 mapping 決策
+
+- 第一階段只落地「國立臺北大學」主修系所 mapping，不先猜測北聯大其他學校完整系所架構。
+- 國立臺北大學系所資料以課程查詢系統「學院／系所」下拉選單為主要依據，但需排除學院標題、輔系、中心、博士班、碩士在職專班、通識、體育、軍訓、暑修與跨校選課單位。
+- 前台不顯示學院欄位；`college` 僅作為系統內部 mapping 與 combobox 分組。
+- 主修系所欄位改為 searchable combobox，搜尋可支援 aliases，但結果顯示正式完整名稱。
+
 ## v0.8-B 偏好設定決策
 
 - `/preferences` 先修正現有第一版 filter，不新增未確認的 filter。

@@ -1,5 +1,5 @@
 import type { UserPreferences } from "@/src/types";
-import { getDepartmentsForSchool } from "@/src/data/departmentCatalog";
+import { getDefaultDepartmentForSchool, getDepartmentsForSchool } from "@/src/data/departmentCatalog";
 
 const STORAGE_KEYS = {
   preferences: "bonus-hunter:preferences",
@@ -15,10 +15,22 @@ function migrateDepartmentName(value: string) {
   }
 
   if (value === "法律系") {
-    return "法律學系";
+    return "法律學系法學組";
+  }
+
+  if (value === "法律學系") {
+    return "法律學系法學組";
   }
 
   return value;
+}
+
+function migrateSchool(value: string) {
+  if (value === "國立臺北大學") {
+    return value;
+  }
+
+  return "國立臺北大學";
 }
 
 export const defaultPreferences: UserPreferences = {
@@ -75,20 +87,30 @@ export function getPreferences(): UserPreferences {
   };
   const normalizedProfile = {
     ...profile,
+    school: migrateSchool(profile.school),
     majorDepartment: migrateDepartmentName(profile.majorDepartment),
     doubleMajorDepartment: migrateDepartmentName(profile.doubleMajorDepartment ?? ""),
     minorDepartment: migrateDepartmentName(profile.minorDepartment ?? ""),
   };
   const knownDepartments = getDepartmentsForSchool(normalizedProfile.school);
+  const majorDepartment = knownDepartments.includes(normalizedProfile.majorDepartment)
+    ? normalizedProfile.majorDepartment
+    : getDefaultDepartmentForSchool(normalizedProfile.school);
+  const doubleMajorDepartment = knownDepartments.includes(normalizedProfile.doubleMajorDepartment)
+    ? normalizedProfile.doubleMajorDepartment
+    : "";
+  const minorDepartment = knownDepartments.includes(normalizedProfile.minorDepartment)
+    ? normalizedProfile.minorDepartment
+    : "";
 
   return {
     ...defaultPreferences,
     ...stored,
     profile: {
       ...normalizedProfile,
-      majorDepartment: knownDepartments.includes(normalizedProfile.majorDepartment)
-        ? normalizedProfile.majorDepartment
-        : knownDepartments[0] ?? normalizedProfile.majorDepartment,
+      majorDepartment,
+      doubleMajorDepartment,
+      minorDepartment,
     },
     rewardTypes: (stored.rewardTypes ?? defaultPreferences.rewardTypes).filter((item) => rewardTypeOptions.includes(item)),
     highlightTags: (stored.highlightTags ?? defaultPreferences.highlightTags).filter((item) => highlightTagOptions.includes(item)),

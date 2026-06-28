@@ -86,7 +86,7 @@ function isDepartmentMatched(opportunity: Opportunity, profile: UserProfile) {
     return true;
   }
 
-  if (allowed.includes(profile.majorDepartment)) {
+  if (matchesAllowedDepartment(profile.majorDepartment, allowed)) {
     return true;
   }
 
@@ -97,7 +97,7 @@ function isDepartmentMatched(opportunity: Opportunity, profile: UserProfile) {
   if (
     opportunity.eligibilityRules.allowDoubleMajor &&
     profile.doubleMajorDepartment &&
-    allowed.includes(profile.doubleMajorDepartment)
+    matchesAllowedDepartment(profile.doubleMajorDepartment, allowed)
   ) {
     return true;
   }
@@ -105,12 +105,16 @@ function isDepartmentMatched(opportunity: Opportunity, profile: UserProfile) {
   if (
     opportunity.eligibilityRules.allowMinor &&
     profile.minorDepartment &&
-    allowed.includes(profile.minorDepartment)
+    matchesAllowedDepartment(profile.minorDepartment, allowed)
   ) {
     return true;
   }
 
   return false;
+}
+
+function matchesAllowedDepartment(departmentName: string, allowedDepartments: string[]) {
+  return allowedDepartments.some((allowedDepartment) => departmentName === allowedDepartment || departmentName.startsWith(allowedDepartment));
 }
 
 export function isQualificationMatched(opportunity: Opportunity, profile: UserProfile) {
@@ -167,14 +171,15 @@ export function getQualificationReasons(opportunity: Opportunity, profile: UserP
     reasons.push(`${profile.grade}學生可參加`);
   }
 
-  if (rules.allowedDepartments?.includes(profile.majorDepartment)) {
+  if (rules.allowedDepartments && matchesAllowedDepartment(profile.majorDepartment, rules.allowedDepartments)) {
     reasons.push("主修系所符合公告限制");
   }
 
   if (
     rules.allowDoubleMajor &&
     profile.doubleMajorDepartment &&
-    rules.allowedDepartments?.includes(profile.doubleMajorDepartment)
+    rules.allowedDepartments &&
+    matchesAllowedDepartment(profile.doubleMajorDepartment, rules.allowedDepartments)
   ) {
     reasons.push("雙主修系所符合資格");
   }
@@ -182,7 +187,8 @@ export function getQualificationReasons(opportunity: Opportunity, profile: UserP
   if (
     rules.allowMinor &&
     profile.minorDepartment &&
-    rules.allowedDepartments?.includes(profile.minorDepartment)
+    rules.allowedDepartments &&
+    matchesAllowedDepartment(profile.minorDepartment, rules.allowedDepartments)
   ) {
     reasons.push("輔系符合資格");
   }

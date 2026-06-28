@@ -1,14 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChipSelector } from "@/src/components/ChipSelector";
-import { getDepartmentsForSchool, inferCollege } from "@/src/data/departmentCatalog";
+import {
+  getDefaultDepartmentForSchool,
+  getDepartmentUnitsForSchool,
+  inferCollege,
+  isDepartmentSearchMatch,
+} from "@/src/data/departmentCatalog";
 import { defaultPreferences, getPreferences, savePreferences } from "@/src/lib/localStorage";
 import { mergeCloudPreferencesToLocal, saveCloudPreferences } from "@/src/lib/preferenceSync";
 import type { DeadlineFilter, OpportunityType, RewardType, TopicArea, UserPreferences } from "@/src/types";
 
-const schools = ["國立臺北大學", "國立臺北科技大學", "臺北醫學大學", "國立臺灣海洋大學"];
+const schools = ["國立臺北大學"];
 const grades = ["大一", "大二", "大三", "大四", "碩一", "碩二"];
 const interests = ["AI", "SDGs", "金融", "法律", "校園生活", "創業", "公共議題"];
 const skills = ["企劃", "簡報", "寫作", "影片剪輯", "設計", "程式", "資料分析"];
@@ -32,7 +37,7 @@ export function PreferencesClient() {
   const [showMoreTopics, setShowMoreTopics] = useState(false);
   const [showMoreSubmissions, setShowMoreSubmissions] = useState(false);
   const isGraduate = form.profile.grade === "碩一" || form.profile.grade === "碩二";
-  const departments = getDepartmentsForSchool(form.profile.school);
+  const departmentUnits = useMemo(() => getDepartmentUnitsForSchool(form.profile.school), [form.profile.school]);
   const topicAreaOptions = showMoreTopics ? [...primaryTopicAreas, ...moreTopicAreas] : primaryTopicAreas;
   const submissionTypeOptions = showMoreSubmissions ? [...primarySubmissionTypes, ...moreSubmissionTypes] : primarySubmissionTypes;
   const prizeMin = form.prizeAmountMin ?? form.maxPrizeAmount ?? 0;
@@ -76,7 +81,7 @@ export function PreferencesClient() {
         ...current.profile,
         ...(key === "school"
           ? {
-              majorDepartment: getDepartmentsForSchool(value)[0] ?? "",
+              majorDepartment: getDefaultDepartmentForSchool(value),
               doubleMajorDepartment: "",
               minorDepartment: "",
             }
@@ -157,10 +162,10 @@ export function PreferencesClient() {
         <section className="section-card space-y-4">
           <h2 className="text-lg font-semibold">我的資格</h2>
           <SelectField label="學校" value={form.profile.school} options={schools} onChange={(value) => updateProfile("school", value)} />
-          <SelectField
+          <DepartmentCombobox
             label="主修系所"
             value={form.profile.majorDepartment}
-            options={departments}
+            departments={departmentUnits}
             onChange={(value) => updateProfile("majorDepartment", value)}
           />
           <SelectField label="年級" value={form.profile.grade} options={grades} onChange={(value) => updateProfile("grade", value)} />
@@ -170,13 +175,13 @@ export function PreferencesClient() {
               <OptionalDepartmentField
                 label="雙主修"
                 value={form.profile.doubleMajorDepartment ?? ""}
-                options={departments}
+                departments={departmentUnits}
                 onChange={(value) => updateProfile("doubleMajorDepartment", value)}
               />
               <OptionalDepartmentField
                 label="輔系"
                 value={form.profile.minorDepartment ?? ""}
-                options={departments}
+                departments={departmentUnits}
                 onChange={(value) => updateProfile("minorDepartment", value)}
               />
             </>
@@ -356,18 +361,18 @@ function PrizeRangeField({
 function OptionalDepartmentField({
   label,
   value,
-  options,
+  departments,
   onChange,
 }: {
   label: string;
   value: string;
-  options: string[];
+  departments: ReturnType<typeof getDepartmentUnitsForSchool>;
   onChange: (value: string) => void;
 }) {
   const enabled = value.length > 0;
 
   function toggle(checked: boolean) {
-    onChange(checked ? options[0] ?? "" : "");
+    onChange(checked ? departments[0]?.name ?? "" : "");
   }
 
   return (
@@ -385,18 +390,104 @@ function OptionalDepartmentField({
         </span>
       </label>
       {enabled ? (
-        <select
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="mt-3 w-full rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-3 py-3 text-sm font-bold text-[var(--text)]"
-        >
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+        <div className="mt-3">
+          <DepartmentCombobox label={`${label}系所`} value={value} departments={departments} onChange={onChange} compact />
+        </div>
       ) : null}
+    </div>
+  );
+}
+
+function DepartmentCombobox({
+  label,
+  value,
+  departments,
+  onChange,
+  compact = false,
+}: {
+  label: string;
+  value: string;
+  departments: ReturnType<typeof getDepartmentUnitsForSchool>;
+  onChange: (value: string) => void;
+  compact?: boolean;
+}) {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const selectedDepartment = departments.find((department) => department.name === value);
+  const filteredDepartments = departments.filter((department) => isDepartmentSearchMatch(department, query));
+  const groupedDepartments = filteredDepartments.reduce<Record<string, typeof departments>>((groups, department) => {
+    groups[department.college] = [...(groups[department.college] ?? []), department];
+    return groups;
+  }, {});
+  const inputValue = open ? query : selectedDepartment?.name ?? value;
+
+  function selectDepartment(name: string) {
+    onChange(name);
+    setQuery("");
+    setOpen(false);
+  }
+
+  return (
+    <div className="grid gap-2">
+      <label className="text-sm font-semibold" htmlFor={`${label}-combobox`}>
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          id={`${label}-combobox`}
+          type="search"
+          value={inputValue}
+          placeholder="搜尋系所"
+          onFocus={() => {
+            setOpen(true);
+            setQuery("");
+          }}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setOpen(true);
+          }}
+          onBlur={() => window.setTimeout(() => setOpen(false), 120)}
+          className={`w-full rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-3 text-sm font-bold text-[var(--text)] outline-none focus:border-[var(--action)] ${
+            compact ? "py-2.5" : "py-3"
+          }`}
+          role="combobox"
+          aria-expanded={open}
+          aria-controls={`${label}-options`}
+          aria-autocomplete="list"
+        />
+        {open ? (
+          <div
+            id={`${label}-options`}
+            className="absolute z-20 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-2 shadow-lg"
+            role="listbox"
+          >
+            {filteredDepartments.length > 0 ? (
+              Object.entries(groupedDepartments).map(([college, collegeDepartments]) => (
+                <div key={college} className="py-1">
+                  <p className="px-2 pb-1 text-xs font-semibold text-[var(--muted)]">{college}</p>
+                  <div className="space-y-1">
+                    {collegeDepartments.map((department) => (
+                      <button
+                        type="button"
+                        key={department.name}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => selectDepartment(department.name)}
+                        className="w-full rounded-xl px-2 py-2 text-left text-sm font-semibold text-[var(--text)] hover:bg-[var(--paper-2)]"
+                        role="option"
+                        aria-selected={department.name === value}
+                      >
+                        {department.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="px-2 py-3 text-sm text-[var(--muted)]">找不到符合的系所</p>
+            )}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
