@@ -2,14 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AuthStatus } from "./AuthStatus";
 
 const items = [
   { href: "/opportunities", label: "機會" },
   { href: "/preferences", label: "偏好" },
   { href: "/saved", label: "收藏" },
-  { href: "/data-entry", label: "匯入" },
-  { href: "/data-staging", label: "審核" },
 ];
 
 export function Navbar() {
@@ -36,7 +33,6 @@ export function Navbar() {
               </Link>
             );
           })}
-          <AuthStatus />
         </div>
       </div>
     </nav>

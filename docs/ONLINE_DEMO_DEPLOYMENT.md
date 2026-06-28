@@ -48,11 +48,16 @@ Vercel 官方文件列出多種部署方式：Git、Vercel Drop、Vercel CLI、D
 - 機會詳情
 - 偏好設定
 - 收藏
-- 帳號頁
-- 匯入／審核工作台可先保留，但不作為主要展示流程
+
+使用者前台導覽只顯示：
+
+- 機會
+- 偏好
+- 收藏
 
 不要求第一輪線上 demo 完成：
 
+- Google 登入
 - Gmail 真實寄信
 - 正式提醒排程
 - n8n
@@ -157,7 +162,7 @@ GMAIL_SENDER_EMAIL=
 - 前端沒有顯示 internalScore、推薦分數、加權數字、排名數字。
 - 「查看官方簡章」仍是官方驗證入口。
 - 若使用 Supabase，確認至少一筆真實來源卡片可打開官方連結。
-- 若展示登入，確認 Supabase redirect URL 已包含線上 domain。
+- 第一輪 demo 前台不顯示 Google 登入。
 
 ## 建議不上線展示的內容
 
@@ -165,6 +170,7 @@ GMAIL_SENDER_EMAIL=
 
 - `/data-staging`
 - `/data-entry`
+- `/account`
 - Gmail 測試信
 - Supabase RLS 細節
 - crawler script

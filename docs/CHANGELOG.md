@@ -13,6 +13,8 @@
 - 因為需要向組員展示 demo，online deployment 需求提前插隊。
 - 第一輪組員展示建議使用 `NEXT_PUBLIC_USE_MOCK_DATA=true`，先確保完整流程可看。
 - Online demo 是展示版本，不等同正式 Production launch。
+- 第一輪前台導覽只顯示「機會／偏好／收藏」；暫時不顯示登入、匯入、審核入口。
+- 首頁移除 v0.1 / mock data 技術字樣，改成面向使用者的官方簡章提醒。
 - 2026-06-28 `npm run build` 已通過；Vercel CLI 版本檢查曾遇到 Windows npm cache cleanup `EPERM`，第一輪建議走 GitHub + Vercel Web UI。
 
 ## C0.1-C0.3 - 2026-06-27

@@ -29,7 +29,7 @@ export default function HomePage() {
         </div>
 
         <p className="mt-5 text-sm leading-6 text-[var(--muted)]">
-          v0.1 使用 mock data 與瀏覽器儲存，整理內容仍需以官方簡章為準。
+          我們會整理重點與提醒適合條件，報名前仍建議打開官方簡章確認完整規則。
         </p>
       </section>
     </main>
