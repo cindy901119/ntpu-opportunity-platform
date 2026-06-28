@@ -40,7 +40,7 @@ type DraftCompetition = {
 
 const topicAreas: TopicArea[] = ["商業／企劃", "創業／新創", "科技／程式", "法政／公共議題", "社會／永續", "不限／不適用", "人文／寫作", "語言／國際", "設計／創作", "其他"];
 const opportunityTypes: OpportunityType[] = ["比賽", "獎學金", "補助／計畫", "其他"];
-const rewardTypes: RewardType[] = ["獎金", "獎學金", "補助", "實體資源", "曝光", "證書"];
+const rewardTypes: RewardType[] = ["獎金", "獎品", "證書", "補助", "無明確獎勵", "未寫清楚"];
 const skills = ["企劃", "簡報", "寫作", "影片剪輯", "設計", "程式", "資料分析"];
 const submissionTypes = ["申請表", "證明文件", "企劃書", "簡報", "影片", "作品集", "程式／Demo"];
 
@@ -325,7 +325,7 @@ export function DataEntryClient() {
           <TextAreaField label="資格文字" value={draft.eligibility_text} onChange={(value) => update("eligibility_text", value)} />
           <div className="grid gap-3 sm:grid-cols-3">
             <TextField label="學校限制" value={draft.school_limit} placeholder="大專院校 / 國立臺北大學 / 臺北聯合大學系統 / 需確認" onChange={(value) => update("school_limit", value)} />
-            <TextField label="系所限制" value={draft.department_limit} placeholder="不限 / 金融系、資訊工程學系" onChange={(value) => update("department_limit", value)} />
+            <TextField label="系所限制" value={draft.department_limit} placeholder="不限 / 金融與合作經營學系、資訊工程學系" onChange={(value) => update("department_limit", value)} />
             <TextField label="年級限制" value={draft.grade_limit} placeholder="大一、大二、大三、大四、碩一、碩二" onChange={(value) => update("grade_limit", value)} />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">

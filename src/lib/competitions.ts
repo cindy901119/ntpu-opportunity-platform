@@ -69,7 +69,7 @@ const topicAreas: TopicArea[] = [
   "設計／創作",
   "其他",
 ];
-const rewardTypes: RewardType[] = ["獎金", "獎學金", "補助", "實體資源", "曝光", "證書"];
+const rewardTypes: RewardType[] = ["獎金", "獎品", "證書", "補助", "無明確獎勵", "未寫清楚"];
 const tuaSchools = ["國立臺北大學", "國立臺北科技大學", "臺北醫學大學", "國立臺灣海洋大學"];
 
 function splitLimit(value: string | null) {

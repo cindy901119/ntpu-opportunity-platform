@@ -50,14 +50,18 @@ function matchesDeadlineFilters(opportunity: Opportunity, filters: UserPreferenc
 }
 
 function matchesFilters(opportunity: Opportunity, preferences: UserPreferences) {
-  const minPrize = preferences.maxPrizeAmount ?? 0;
+  const legacyMinPrize = preferences.maxPrizeAmount ?? 0;
+  const minPrize = preferences.prizeAmountMin ?? legacyMinPrize;
+  const maxPrize = preferences.prizeAmountMax ?? 0;
+  const usesPrizeFilter = Boolean(minPrize || maxPrize);
+  const prizeAmount = opportunity.maxPrizeAmount ?? 0;
 
   return (
     (!preferences.preferredOpportunityTypes.length || preferences.preferredOpportunityTypes.includes(opportunity.opportunityType)) &&
     (!preferences.topicAreas.length || intersect(opportunity.topicAreas, preferences.topicAreas).length > 0) &&
     matchesDeadlineFilters(opportunity, preferences.deadlineFilters) &&
     (!preferences.rewardTypes.length || intersect(opportunity.rewardTypes, preferences.rewardTypes).length > 0) &&
-    (!minPrize || (opportunity.maxPrizeAmount ?? 0) >= minPrize)
+    (!usesPrizeFilter || (prizeAmount >= minPrize && (!maxPrize || prizeAmount <= maxPrize)))
   );
 }
 
@@ -201,10 +205,8 @@ function getHighlightMatches(opportunity: Opportunity, highlightTags: string[]) 
   ].join(" ");
 
   return highlightTags.filter((tag) => {
-    if (tag === "有獎金") return /獎金|獎學金|補助|獎助/.test(text);
     if (tag === "北大限定") return opportunity.eligibilityRules.schoolScope === "北大限定";
     if (tag === "北聯大限定") return opportunity.eligibilityRules.schoolScope === "北聯大限定";
-    if (tag === "可累積作品集") return /作品|Demo|原型|成果/.test(text);
     if (tag === "可個人參加") return /個人/.test(text);
     if (tag === "可組隊") return /團隊|組隊/.test(text);
     if (tag === "線上繳交") return /線上|連結|上傳/.test(text);
@@ -244,11 +246,7 @@ function getMatchedReasons(opportunity: Opportunity, preferences: UserPreference
   });
 
   highlightMatches.forEach((tag) => {
-    if (tag === "有獎金") {
-      reasons.push("你特別重視有獎金，這個機會提供獎金或獎助。");
-    } else {
-      reasons.push(`你特別重視${tag}，這個機會符合此條件。`);
-    }
+    reasons.push(`你特別重視${tag}，這個機會符合此條件。`);
   });
 
   return reasons.slice(0, 6);

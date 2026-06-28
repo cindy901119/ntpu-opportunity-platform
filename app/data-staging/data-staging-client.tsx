@@ -61,7 +61,7 @@ const STORAGE_KEY = "bonus-hunter:data-staging-draft";
 
 const topicAreas: TopicArea[] = ["商業／企劃", "創業／新創", "科技／程式", "法政／公共議題", "社會／永續", "不限／不適用", "人文／寫作", "語言／國際", "設計／創作", "其他"];
 const opportunityTypes: OpportunityType[] = ["比賽", "獎學金", "補助／計畫", "其他"];
-const rewardTypes: RewardType[] = ["獎金", "獎學金", "補助", "實體資源", "曝光", "證書"];
+const rewardTypes: RewardType[] = ["獎金", "獎品", "證書", "補助", "無明確獎勵", "未寫清楚"];
 const skills = ["企劃", "簡報", "寫作", "影片剪輯", "設計", "程式", "資料分析"];
 const submissionTypes = ["申請表", "證明文件", "企劃書", "簡報", "影片", "作品集", "程式／Demo"];
 
@@ -543,4 +543,3 @@ function SelectField({
     </label>
   );
 }
-

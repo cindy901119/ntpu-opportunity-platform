@@ -29,7 +29,7 @@ export type TopicArea =
 
 export type DeadlineFilter = "三天內" | "一週內" | "一個月內" | "一個月以上" | "截止日未明";
 
-export type RewardType = "獎金" | "獎學金" | "補助" | "實體資源" | "曝光" | "證書";
+export type RewardType = "獎金" | "獎品" | "證書" | "補助" | "無明確獎勵" | "未寫清楚";
 
 export type EligibilityRules = {
   schoolScope: SchoolScope;
@@ -86,6 +86,8 @@ export type UserPreferences = {
   deadlineFilters: DeadlineFilter[];
   rewardTypes: RewardType[];
   maxPrizeAmount?: number;
+  prizeAmountMin?: number;
+  prizeAmountMax?: number;
   preferredSubmissionTypes: string[];
   highlightTags: string[];
 };
