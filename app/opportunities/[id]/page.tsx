@@ -25,7 +25,7 @@ export default async function OpportunityDetailPage({
   const recommendation = getRecommendations([opportunity], defaultPreferences)[0];
   const deadlineTone = getDeadlineTone(opportunity.deadline);
   const prizeTone = getPrizeTone(opportunity.prizeText);
-  const officialUrl = opportunity.officialUrl ?? opportunity.sourceUrl;
+  const officialUrl = opportunity.officialUrl;
   const opportunities = await getPublishedCompetitions();
   const similar = opportunities
     .filter((item) => item.id !== opportunity.id)
@@ -145,7 +145,7 @@ export default async function OpportunityDetailPage({
             <Rows
               rows={[
                 ["官方簡章", "報名前建議打開確認完整規則。"],
-                ["官方連結", officialUrl],
+                ["官方連結", officialUrl ?? "尚未擷取到真正官方簡章，需人工補上。"],
                 ["北大公告", opportunity.sourceUrl],
               ]}
             />
@@ -172,14 +172,20 @@ export default async function OpportunityDetailPage({
 
       <div className="sticky bottom-0 z-10 flex gap-2 border-t border-[var(--line)] bg-[var(--paper-2)] px-4 py-3">
         <SaveButton opportunityId={opportunity.id} />
-        <a
-          href={officialUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="flex-1 rounded-2xl bg-[var(--action)] px-4 py-3 text-center font-semibold text-[var(--paper)]"
-        >
-          查看官方簡章
-        </a>
+        {officialUrl ? (
+          <a
+            href={officialUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex-1 rounded-2xl bg-[var(--action)] px-4 py-3 text-center font-semibold text-[var(--paper)]"
+          >
+            查看官方簡章
+          </a>
+        ) : (
+          <span className="flex-1 rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-4 py-3 text-center font-semibold text-[var(--muted)]">
+            官方簡章待補
+          </span>
+        )}
       </div>
     </div>
   );

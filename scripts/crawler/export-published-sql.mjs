@@ -42,6 +42,62 @@ const SUBMISSION_RULES = [
   { pattern: /作品集|作品檔案|圖案作品/, value: "作品集" },
 ];
 
+const MANUAL_OVERRIDES = [
+  {
+    pattern: /有事青年行動競賽/,
+    organizer: "嘉義市政府",
+    officialUrl: "https://youthsoullab.chiayi.gov.tw/",
+    summary: "以地方文化、數位工具與青年行動為主題，徵求可實作的社會議題方案。",
+  },
+  {
+    pattern: /AIxESG|U-STEP永續行動獎/,
+    organizer: "臺北聯合大學系統",
+    officialUrl: null,
+    summary: "以 AI 與 ESG 為主題，徵求全國大專校院學生提出永續行動方案。",
+  },
+  {
+    pattern: /群馥盃圖案設計大賽/,
+    organizer: "崑山科技大學",
+    officialUrl: "https://dmetextile.ksu.edu.tw/",
+    summary: "徵求圖案設計作品，採線上報名與作品上傳，入圍者需參加現場決賽。",
+  },
+  {
+    pattern: /國家公園保育研討會青年論文徵文競賽/,
+    organizer: "內政部國家公園署",
+    officialUrl: "https://reurl.cc/185ElX",
+    summary: "徵求國家公園、海岸、濕地與海洋生態保育相關研究或小論文。",
+  },
+  {
+    pattern: /學生自主學習LINE社群競賽/,
+    organizer: "國立臺北大學教學發展中心",
+    officialUrl: "https://reurl.cc/9WN8Aa",
+    summary: "以 LINE 社群作為共學基地，鼓勵學生跨域組隊整理資訊、共創知識。",
+  },
+  {
+    pattern: /鏡頭裡的綠色行動/,
+    organizer: "中鼎教育基金會",
+    officialUrl: null,
+    summary: "以永續行動為主題徵求短影音作品，鼓勵用影像呈現綠色行動。",
+  },
+  {
+    pattern: /海洋保育創意短影音競賽/,
+    organizer: "海洋保育署",
+    officialUrl: null,
+    summary: "以海洋保育為主題徵求創意短影音，鼓勵用影像呈現人與海洋的關係。",
+  },
+  {
+    pattern: /獎助外國學生短期研習本土語言/,
+    organizer: "教育部",
+    officialUrl: null,
+    summary: "補助外國學生研習臺灣本土語言，申請資格與程序需依官方計畫確認。",
+  },
+];
+
+function getManualOverride(title, rawText) {
+  const text = `${title} ${rawText}`;
+  return MANUAL_OVERRIDES.find((item) => item.pattern.test(text)) ?? null;
+}
+
 function sqlString(value) {
   if (value === null || value === undefined || value === "") return "null";
   return `'${String(value).replace(/'/g, "''")}'`;
@@ -94,7 +150,7 @@ function inferDeadline(rawText, postedDate) {
 }
 
 function inferOrganizer(rawText, sourceName) {
-  const known = rawText.match(/(彰化縣政府|嘉義縣政府|嘉義市政府|新北市政府|新北市政府文化局|海洋保育署|崑山科技大學|財團法人感恩聖仁社會福利慈善基金會)/);
+  const known = rawText.match(/(臺北聯合大學系統|內政部國家公園署|教育部|中鼎教育基金會|彰化縣政府|嘉義縣政府|嘉義市政府|新北市政府|新北市政府文化局|海洋保育署|崑山科技大學|財團法人感恩聖仁社會福利慈善基金會)/);
   if (known) return known[1];
 
   const match = rawText.match(/(?:主辦單位|主辦機關)：?\s*([^。；\n]+?)(?:承辦|協辦|辦理|SYSTEM|$)/);
@@ -111,8 +167,8 @@ function inferOfficialUrl(rawText, fallbackUrl) {
   const urls = [...rawText.matchAll(/https?:\/\/[^\s，,。)）]+/g)]
     .map((match) => match[0].replace(/[)\]）】。.,，]+$/g, ""))
     .filter(Boolean);
-  const external = urls.find((url) => !/ntpu\.edu\.tw|gm\.ntpu\.edu\.tw/.test(url));
-  return external ?? fallbackUrl;
+  const external = urls.find((url) => !/ntpu\.edu\.tw|gm\.ntpu\.edu\.tw|forms\.gle/.test(url));
+  return external ?? null;
 }
 
 function inferOpportunityType(title, rawText) {
@@ -210,6 +266,7 @@ function inferSummary(rawText) {
 
 function toOpportunity(announcement) {
   const text = announcement.rawText ?? "";
+  const override = getManualOverride(announcement.title, text);
   const isAllowedSpecialCase = ALLOWED_SPECIAL_CASES.some((pattern) => pattern.test(`${announcement.title} ${text}`));
   if (!isAllowedSpecialCase && EXCLUDED_PATTERNS.some((pattern) => pattern.test(text))) {
     return null;
@@ -231,9 +288,9 @@ function toOpportunity(announcement) {
   return {
     id: stableUuid(key),
     title: cleanTitle(announcement.title),
-    organizer: inferOrganizer(text, announcement.sourceName),
+    organizer: override?.organizer ?? inferOrganizer(text, announcement.sourceName),
     source_url: announcement.url,
-    official_url: inferOfficialUrl(text, announcement.url),
+    official_url: override ? override.officialUrl : inferOfficialUrl(text, announcement.url),
     source_name: announcement.sourceName,
     source_type: announcement.sourceType,
     source_posted_date: announcement.postedDate,
@@ -254,7 +311,7 @@ function toOpportunity(announcement) {
     prize_text: prizeText,
     reward_types: rewardTypes,
     max_prize_amount: maxPrizeAmount,
-    summary: inferSummary(text),
+    summary: override?.summary ?? inferSummary(text),
     special_notes: ["此筆由爬蟲結果轉為發布草稿，請人工確認截止日、資格與獎金。"],
     participation_text: /團隊/.test(text) ? "個人或團隊，依官方簡章" : "依官方簡章",
     schedule: deadline ? [{ date: `${Number(deadline.slice(5, 7))}/${Number(deadline.slice(8, 10))}`, label: "報名截止" }] : [],

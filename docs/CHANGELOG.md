@@ -507,3 +507,6 @@
 - Removed the duplicated bold `北大機會雷達` title from the `/opportunities` filter header because the app name is already shown in the top navbar.
 - Added `official_url` support so the detail page CTA can point to the real organizer guide/application page while `source_url` remains the NTPU discovery announcement.
 - Added `docs/SUPABASE_OFFICIAL_URL_MIGRATION.sql`; the frontend falls back to legacy selects until the column is added, avoiding mock-data fallback on production.
+- Refined opportunity cards: filter chips and filter button now share one row; the recommendation toggle moved below the centered detail button and sits beside save.
+- Added manually reviewed organizers, short summaries, and official URLs for current manual NTPU bulletin imports; rows without a real external official page now keep `official_url = null` instead of linking the NTPU email bulletin as the guide.
+- Detail pages show `官方簡章待補` when no real official URL is available, while retaining the NTPU bulletin as source traceability.

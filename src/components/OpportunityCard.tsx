@@ -55,23 +55,6 @@ export function OpportunityCard({ result }: OpportunityCardProps) {
         ))}
       </div>
 
-      <div className="mt-4 border-t border-[var(--soft)] pt-3">
-        <button
-          type="button"
-          onClick={() => setOpen((value) => !value)}
-          className="text-sm font-semibold text-[var(--info)] underline underline-offset-4"
-        >
-          為什麼推薦你？ {open ? "▲" : "▼"}
-        </button>
-        {open ? (
-          <RecommendationReason
-            qualificationReasons={result.qualificationReasons}
-            preferenceMatches={result.preferenceMatches}
-            warnings={result.warnings}
-          />
-        ) : null}
-      </div>
-
       <div className="mt-auto grid gap-2 pt-4">
         <Link
           href={`/opportunities/${opportunity.id}`}
@@ -79,9 +62,25 @@ export function OpportunityCard({ result }: OpportunityCardProps) {
         >
           查看詳情
         </Link>
-        <div className="flex flex-wrap items-center justify-start gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => setOpen((value) => !value)}
+            className="text-sm font-semibold text-[var(--info)] underline underline-offset-4"
+          >
+            為什麼推薦你？ {open ? "▲" : "▼"}
+          </button>
           <SaveButton opportunityId={opportunity.id} compact />
         </div>
+        {open ? (
+          <div className="border-t border-[var(--soft)] pt-2">
+            <RecommendationReason
+              qualificationReasons={result.qualificationReasons}
+              preferenceMatches={result.preferenceMatches}
+              warnings={result.warnings}
+            />
+          </div>
+        ) : null}
       </div>
     </article>
   );
