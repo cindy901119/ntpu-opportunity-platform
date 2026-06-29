@@ -62,7 +62,7 @@ export function OpportunitiesClient({ opportunities }: { opportunities: Opportun
   return (
     <>
       <header className="border-b border-[var(--line)] bg-[rgba(236,229,217,.92)] px-4 py-4">
-        <div className="mx-auto max-w-[760px]">
+        <div className="mx-auto max-w-[1040px]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-semibold tracking-wide">北大機會雷達</h1>
@@ -75,17 +75,20 @@ export function OpportunitiesClient({ opportunities }: { opportunities: Opportun
               篩選
             </Link>
           </div>
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-            {(filtersRelaxed ? ["已放寬篩選"] : activeFilters.length ? activeFilters : ["尚未設定篩選"]).map((chip) => (
-              <Tag key={chip} tone="active">
-                {chip}
-              </Tag>
-            ))}
+          <div className="mt-3">
+            <p className="mb-2 text-xs font-semibold text-[var(--muted)]">已套用條件</p>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {(filtersRelaxed ? ["已放寬篩選"] : activeFilters.length ? activeFilters : ["尚未設定篩選"]).map((chip) => (
+                <Tag key={chip} tone="active">
+                  {chip}
+                </Tag>
+              ))}
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-[760px] px-4 py-5">
+      <main className="mx-auto max-w-[1040px] px-4 py-5">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold">推薦給你</h2>
@@ -100,7 +103,7 @@ export function OpportunitiesClient({ opportunities }: { opportunities: Opportun
                 : "border-[var(--line)] bg-[var(--paper)] text-[var(--muted)]"
             }`}
           >
-            {includeExpired ? "已包含截止" : expiredCount ? `顯示已截止 ${expiredCount}` : "已截止 0"}
+            {includeExpired ? "隱藏已截止" : `顯示已截止（${expiredCount}）`}
           </button>
         </div>
 
@@ -141,7 +144,7 @@ export function OpportunitiesClient({ opportunities }: { opportunities: Opportun
             </div>
           </section>
         ) : (
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 lg:grid-cols-2">
             {visibleResults.map((result) => (
               <OpportunityCard key={result.opportunity.id} result={result} />
             ))}

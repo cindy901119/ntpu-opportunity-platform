@@ -50,7 +50,7 @@ export function SavedClient({ opportunities }: { opportunities: Opportunity[] })
   }, [opportunities, savedIds]);
 
   return (
-    <main className="mx-auto max-w-[760px] px-4 py-5">
+    <main className="mx-auto max-w-[1040px] px-4 py-5">
       <div className="mb-5">
         <h1 className="text-2xl font-semibold">收藏</h1>
         <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{syncMessage}</p>
@@ -64,7 +64,7 @@ export function SavedClient({ opportunities }: { opportunities: Opportunity[] })
           actionLabel="查看機會"
         />
       ) : (
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3 lg:grid-cols-2">
           {results.map((result) => (
             <OpportunityCard key={result.opportunity.id} result={result} />
           ))}

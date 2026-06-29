@@ -149,11 +149,11 @@ export function PreferencesClient() {
   }
 
   return (
-    <main className="mx-auto max-w-[760px] px-4 py-5">
+    <main className="mx-auto max-w-[880px] px-4 py-5">
       <div className="mb-5">
         <h1 className="text-2xl font-semibold">設定偏好</h1>
         <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-          資格會影響能不能報，偏好會影響推薦排序。
+          我的資格會影響能不能報的判斷；偏好只影響排序。建議確認資料正確，避免漏掉適合你的機會。
         </p>
         <p className="mt-2 text-sm leading-6 text-[var(--info)]">{syncMessage}</p>
       </div>
@@ -235,7 +235,7 @@ export function PreferencesClient() {
             onToggle={() => setShowMoreSubmissions((value) => !value)}
             hasMore
           />
-          <ChipSelector label="其他條件" options={highlightTags} value={form.highlightTags} onChange={(value) => updateArray("highlightTags", value)} />
+          <ChipSelector label="報名條件偏好" options={highlightTags} value={form.highlightTags} onChange={(value) => updateArray("highlightTags", value)} />
         </section>
       </div>
 
