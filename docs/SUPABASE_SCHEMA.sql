@@ -8,6 +8,7 @@ create table if not exists public.competitions (
   title text not null,
   organizer text,
   source_url text,
+  official_url text,
   source_name text,
   source_type text,
   source_posted_date date,
@@ -41,6 +42,7 @@ create table if not exists public.competitions (
 );
 
 alter table public.competitions add column if not exists source_name text;
+alter table public.competitions add column if not exists official_url text;
 alter table public.competitions add column if not exists source_type text;
 alter table public.competitions add column if not exists source_posted_date date;
 alter table public.competitions add column if not exists source_fetched_at timestamptz;

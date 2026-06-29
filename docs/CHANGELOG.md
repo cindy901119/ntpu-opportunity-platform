@@ -505,3 +505,5 @@
 - Default preferences no longer apply narrow topic, deadline, reward, submission, prize, skill, or highlight filters on first visit; this keeps `/opportunities` browsable when real Supabase data is sparse.
 - Cleaned crawler-generated summaries for old `bulletin.ntpu.edu.tw` pages so card summaries start from `公告內容` instead of email metadata such as announcement date, unit, and contact person.
 - Removed the duplicated bold `北大機會雷達` title from the `/opportunities` filter header because the app name is already shown in the top navbar.
+- Added `official_url` support so the detail page CTA can point to the real organizer guide/application page while `source_url` remains the NTPU discovery announcement.
+- Added `docs/SUPABASE_OFFICIAL_URL_MIGRATION.sql`; the frontend falls back to legacy selects until the column is added, avoiding mock-data fallback on production.

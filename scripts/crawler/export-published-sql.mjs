@@ -107,6 +107,14 @@ function inferOrganizer(rawText, sourceName) {
   return gov ? gov[1] : sourceName;
 }
 
+function inferOfficialUrl(rawText, fallbackUrl) {
+  const urls = [...rawText.matchAll(/https?:\/\/[^\s，,。)）]+/g)]
+    .map((match) => match[0].replace(/[)\]）】。.,，]+$/g, ""))
+    .filter(Boolean);
+  const external = urls.find((url) => !/ntpu\.edu\.tw|gm\.ntpu\.edu\.tw/.test(url));
+  return external ?? fallbackUrl;
+}
+
 function inferOpportunityType(title, rawText) {
   const text = `${title} ${rawText}`;
   if (/急難|救助|補助|計畫/.test(text) && !/競賽|大賽|徵選/.test(text)) return "補助／計畫";
@@ -225,6 +233,7 @@ function toOpportunity(announcement) {
     title: cleanTitle(announcement.title),
     organizer: inferOrganizer(text, announcement.sourceName),
     source_url: announcement.url,
+    official_url: inferOfficialUrl(text, announcement.url),
     source_name: announcement.sourceName,
     source_type: announcement.sourceType,
     source_posted_date: announcement.postedDate,
@@ -260,6 +269,7 @@ function toInsertSql(opportunities) {
     "title",
     "organizer",
     "source_url",
+    "official_url",
     "source_name",
     "source_type",
     "source_posted_date",
@@ -293,6 +303,7 @@ function toInsertSql(opportunities) {
     sqlString(item.title),
     sqlString(item.organizer),
     sqlString(item.source_url),
+    sqlString(item.official_url),
     sqlString(item.source_name),
     sqlString(item.source_type),
     item.source_posted_date ? `${sqlString(item.source_posted_date)}::date` : "null",
@@ -335,6 +346,7 @@ function toInsertSql(opportunities) {
     "  title = excluded.title,",
     "  organizer = excluded.organizer,",
     "  source_url = excluded.source_url,",
+    "  official_url = excluded.official_url,",
     "  source_posted_date = excluded.source_posted_date,",
     "  source_fetched_at = excluded.source_fetched_at,",
     "  source_content_hash = excluded.source_content_hash,",

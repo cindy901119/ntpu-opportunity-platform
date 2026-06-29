@@ -46,6 +46,7 @@ export type Opportunity = {
   title: string;
   organizer: string;
   sourceUrl: string;
+  officialUrl?: string;
   deadline: string;
   opportunityType: OpportunityType;
   topicAreas: TopicArea[];

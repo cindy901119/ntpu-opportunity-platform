@@ -7,6 +7,7 @@ type CompetitionRow = {
   title: string;
   organizer: string | null;
   source_url: string | null;
+  official_url: string | null;
   deadline: string | null;
   opportunity_type: string | null;
   topic_areas: string[] | null;
@@ -34,6 +35,7 @@ const COMPETITION_SELECT = [
   "title",
   "organizer",
   "source_url",
+  "official_url",
   "deadline",
   "opportunity_type",
   "topic_areas",
@@ -55,6 +57,8 @@ const COMPETITION_SELECT = [
   "judging_text",
   "status",
 ].join(",");
+
+const COMPETITION_SELECT_LEGACY = COMPETITION_SELECT.replace("official_url,", "");
 
 const opportunityTypes: OpportunityType[] = ["比賽", "獎學金", "補助／計畫", "其他"];
 const topicAreas: TopicArea[] = [
@@ -168,6 +172,7 @@ function mapCompetitionRow(row: CompetitionRow): Opportunity {
     title: row.title,
     organizer: row.organizer ?? "主辦單位待確認",
     sourceUrl: row.source_url ?? "",
+    officialUrl: row.official_url ?? row.source_url ?? "",
     deadline,
     opportunityType: normalizeOpportunityType(row.opportunity_type),
     topicAreas: normalizeList(row.topic_areas, topicAreas, ["其他"]),
@@ -203,17 +208,25 @@ export async function getPublishedCompetitions(): Promise<Opportunity[]> {
   }
 
   try {
-    const { data, error } = await getSupabaseClient()
+    let response = await getSupabaseClient()
       .from("competitions")
       .select(COMPETITION_SELECT)
       .eq("status", "published")
       .order("deadline", { ascending: true, nullsFirst: false });
 
-    if (error) {
-      throw error;
+    if (response.error?.code === "42703") {
+      response = await getSupabaseClient()
+        .from("competitions")
+        .select(COMPETITION_SELECT_LEGACY)
+        .eq("status", "published")
+        .order("deadline", { ascending: true, nullsFirst: false });
     }
 
-    const rows = (data ?? []) as unknown as CompetitionRow[];
+    if (response.error) {
+      throw response.error;
+    }
+
+    const rows = (response.data ?? []) as unknown as CompetitionRow[];
 
     return rows.length ? rows.map(mapCompetitionRow) : mockOpportunities;
   } catch (error) {
@@ -228,18 +241,27 @@ export async function getCompetitionById(id: string): Promise<Opportunity | null
   }
 
   try {
-    const { data, error } = await getSupabaseClient()
+    let response = await getSupabaseClient()
       .from("competitions")
       .select(COMPETITION_SELECT)
       .eq("id", id)
       .eq("status", "published")
       .maybeSingle();
 
-    if (error) {
-      throw error;
+    if (response.error?.code === "42703") {
+      response = await getSupabaseClient()
+        .from("competitions")
+        .select(COMPETITION_SELECT_LEGACY)
+        .eq("id", id)
+        .eq("status", "published")
+        .maybeSingle();
     }
 
-    const row = data as unknown as CompetitionRow | null;
+    if (response.error) {
+      throw response.error;
+    }
+
+    const row = response.data as unknown as CompetitionRow | null;
 
     return row ? mapCompetitionRow(row) : mockById(id);
   } catch (error) {
