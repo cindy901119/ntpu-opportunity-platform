@@ -502,3 +502,4 @@
 - Old `bulletin.ntpu.edu.tw` pages now infer titles from the `公告標題` field instead of the generic HTML title `電子郵件公告`.
 - `opportunities` page is now forced dynamic so newly imported Supabase data appears without waiting for a static rebuild cache.
 - `教育部獎助外國學生短期研習本土語言計畫` is kept as a special case even though the text mentions courses; it is marked as qualification-needs-confirmation so it should not be prioritized.
+- Default preferences no longer apply narrow topic, deadline, reward, submission, prize, skill, or highlight filters on first visit; this keeps `/opportunities` browsable when real Supabase data is sparse.
