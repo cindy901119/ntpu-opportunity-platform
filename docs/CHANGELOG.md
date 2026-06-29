@@ -503,3 +503,5 @@
 - `opportunities` page is now forced dynamic so newly imported Supabase data appears without waiting for a static rebuild cache.
 - `教育部獎助外國學生短期研習本土語言計畫` is kept as a special case even though the text mentions courses; it is marked as qualification-needs-confirmation so it should not be prioritized.
 - Default preferences no longer apply narrow topic, deadline, reward, submission, prize, skill, or highlight filters on first visit; this keeps `/opportunities` browsable when real Supabase data is sparse.
+- Cleaned crawler-generated summaries for old `bulletin.ntpu.edu.tw` pages so card summaries start from `公告內容` instead of email metadata such as announcement date, unit, and contact person.
+- Removed the duplicated bold `北大機會雷達` title from the `/opportunities` filter header because the app name is already shown in the top navbar.

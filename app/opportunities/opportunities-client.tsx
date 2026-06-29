@@ -63,11 +63,7 @@ export function OpportunitiesClient({ opportunities }: { opportunities: Opportun
     <>
       <header className="border-b border-[var(--line)] bg-[rgba(236,229,217,.92)] px-4 py-4">
         <div className="mx-auto max-w-[1040px]">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h1 className="text-xl font-semibold tracking-wide">北大機會雷達</h1>
-              <p className="mt-1 text-sm text-[var(--muted)]">先看能不能報，再看值不值得報</p>
-            </div>
+          <div className="flex items-start justify-end gap-3">
             <Link
               href="/preferences"
               className="rounded-full border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm font-semibold text-[var(--action)]"
@@ -75,7 +71,7 @@ export function OpportunitiesClient({ opportunities }: { opportunities: Opportun
               篩選
             </Link>
           </div>
-          <div className="mt-3">
+          <div>
             <p className="mb-2 text-xs font-semibold text-[var(--muted)]">已套用條件</p>
             <div className="flex gap-2 overflow-x-auto pb-1">
               {(filtersRelaxed ? ["已放寬篩選"] : activeFilters.length ? activeFilters : ["尚未設定篩選"]).map((chip) => (

@@ -184,13 +184,20 @@ function inferSchoolLimit(rawText) {
 }
 
 function inferSummary(rawText) {
-  const cleaned = rawText
+  const contentText = rawText.match(/公告內容\s*(.+?)(?:\s*附件\s*附件\d+：|$)/u)?.[1] ?? rawText;
+  const cleaned = contentText
+    .replace(/^(主旨|說明|一、|二、|三、|四、)\s*[:：]?/u, "")
+    .replace(/檢送.*?(相關資訊|競賽簡章|活動資訊).*?(請查照|說明[:：]?)/u, "")
     .replace(/:::|SYSTEM\.[A-Z.]+|訊息|GENERAL|學生事務處/g, "")
+    .replace(/國立臺北大學|電子郵件公告|English Version|公告日期.*?公告標題/gu, "")
     .replace(/^[/.\s]+/, "")
     .replace(/\s+/g, " ")
     .trim();
-  const sentence = cleaned.split(/[。；]/).find((part) => part.length >= 24) ?? cleaned;
-  return sentence.replace(/^[/.\s]+/, "").slice(0, 90);
+  const sentence = cleaned
+    .split(/[。；]/)
+    .map((part) => part.trim())
+    .find((part) => part.length >= 24 && !/^主旨|^說明|請查照/.test(part)) ?? cleaned;
+  return sentence.replace(/^[/.\s,，。；:：]+/, "").slice(0, 90);
 }
 
 function toOpportunity(announcement) {
