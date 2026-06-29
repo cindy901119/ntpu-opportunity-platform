@@ -1,0 +1,9 @@
+sourceKey: manual_ntpu_bulletin_urls
+sourceName: 人工篩選北大公告 URL
+title: 👉2026年學生自主學習LINE社群競賽👈
+url: https://bulletin.ntpu.edu.tw/bulletin_content.php?no=20260616095347721151
+postedDate: 2026-06-16
+contentHash: f9e5aa4590cb3554fb53c956c926c24ce1a9cc4d4b904ad4b1d796d1664f1682
+matchedKeywords: 競賽
+
+國立臺北大學 電子郵件公告 English Version 電子郵件公告 公告日期 2026-06-16 09:53:47 公告單位 教學發展中心 公告人 楊羽汶 聯絡方式 #66124 Email-w9351203@gm.ntpu.edu.tw 公告標題 👉2026年學生自主學習LINE社群競賽👈 公告內容 迎接AI人工智慧、ESG企業永續與SDGs聯合國永續發展目標的核心浪潮，你準備好展現跨域影響力了嗎？ 本競賽打破傳統學習邊界，以日常必備的「LINE社群」為共學基地，全面召集校內外具備創新思維的熱血學子！ 在這裡，你將與跨校、跨領域的夥伴攜手組隊，在資訊篩選與知識共創的過程中，將個人專業與當代社會議題深度接軌。 活動不僅賽制彈性、充滿同儕協作的樂趣，更有總額豐富的單場獎與年度團隊、個人大獎等你來挑戰！ 快來點燃你的自主學習魂，用社群串聯智慧，讓創意發光！ 社群連結 - https://reurl.cc/YDNzoo 詳細公告 - https://reurl.cc/9WN8Aa (教務處首頁/教學發展標籤也可以找到) 附件 -

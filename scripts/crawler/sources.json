@@ -1,0 +1,74 @@
+[
+  {
+    "sourceKey": "ntpu_osa_extracurricular",
+    "sourceName": "國立臺北大學學務處課外組公告",
+    "sourceType": "school_public_page",
+    "listUrl": "https://new.ntpu.edu.tw/osa/news?tag=%E8%AA%B2%E5%A4%96%E7%B5%84,%E8%AA%B2%E6%8C%87%E7%B5%84&title=%E8%AA%B2%E5%A4%96%E7%B5%84",
+    "allowedUrlPrefix": "https://new.ntpu.edu.tw/osa/news/",
+    "apiSite": "osa_ntpu",
+    "apiTags": [
+      "課外組"
+    ],
+    "maxPages": 3,
+    "includeKeywords": [
+      "競賽",
+      "比賽",
+      "獎學金",
+      "獎助",
+      "獎勵",
+      "補助",
+      "計畫",
+      "申請",
+      "徵件",
+      "徵選",
+      "提案",
+      "報名",
+      "國科會",
+      "大賽",
+      "選秀",
+      "贊助",
+      "培訓"
+    ],
+    "excludeKeywords": [
+      "徵才",
+      "停電",
+      "招生",
+      "入學",
+      "錄取",
+      "得獎名單",
+      "親子音樂會",
+      "成果發表會圓滿落幕",
+      "交流成果"
+    ],
+    "maxItems": 30
+  },
+  {
+    "sourceKey": "ntpu_osa_life",
+    "sourceName": "國立臺北大學學務處生活輔導組",
+    "sourceType": "school_public_page",
+    "listUrl": "https://new.ntpu.edu.tw/osa/life",
+    "allowedUrlPrefix": "https://new.ntpu.edu.tw/osa/",
+    "includeKeywords": [
+      "獎學金",
+      "助學金",
+      "急難",
+      "補助",
+      "獎助",
+      "救助"
+    ],
+    "excludeKeywords": [
+      "徵才",
+      "停電",
+      "招生",
+      "入學",
+      "錄取",
+      "得獎名單",
+      "親子音樂會",
+      "成果發表會圓滿落幕",
+      "交流成果",
+      "停車證",
+      "汽車停車"
+    ],
+    "maxItems": 10
+  }
+]

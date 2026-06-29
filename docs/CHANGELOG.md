@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## C0 crawler import - 2026-06-29
+
+### Added
+
+- 新增 `scripts/crawler/export-published-sql.mjs`，可從 `scripts/crawler/output/sample-announcements.json` 產生 `published-opportunities.review.sql`。
+- 新增 `npm run crawl:export-published-sql`，用於產生可人工檢查後貼到 Supabase 的 `competitions(status = 'published')` SQL 草稿。
+- `docs/SUPABASE_IMPORT_GUIDE.md` 補上 crawler output 匯入流程，區分 raw staging 與替換前台 demo/sample 的 published 匯入。
+
+### Notes
+
+- `published-opportunities.review.sql` 會嘗試排除課程／講座／工作坊／職缺／海外交換、急難救助、一般文化推廣計畫、草案預告、評審推薦表等第一版排除項目，但仍需人工確認截止日、資格、獎金與機會類型。
+- 課外組 crawler 改用北大公開 GraphQL API 分頁抓取，支援 `--max-pages`；目前 3 頁精準模式可抓 14 筆 raw announcement，轉 published SQL 後剩 7 筆 review 草稿。
+
 ## v0.8-E - 2026-06-29
 
 ### Changed
@@ -17,6 +30,36 @@
 ### Verified
 
 - `npm run build` 通過。
+
+## C0 crawler trial - 2026-06-29
+
+### Added
+
+- 新增 `scripts/crawler/crawler-ui.mjs` 獨立本機控制台，可自行操作 crawler、調整抓取數量、切換精準／寬鬆模式並產出 raw SQL 草稿。
+- 新增 `scripts/crawler/sources.json`，讓 crawler 來源可以先由設定檔管理。
+- 新增 `docs/C0_CRAWLER_CONSOLE_DEPLOYMENT.md`，整理發布給組員看之前的安全建議。
+- 新增 `docs/C0_N8N_RAW_TO_DRAFT.md`，整理人工打開 n8n 將 raw 轉 draft 的 MVP 節點流程。
+- `package.json` 新增 `npm run crawl:ui`。
+
+### Changed
+
+- 修正 `scripts/crawler/crawl-source.mjs` 與 `scripts/crawler/crawl-source.ts` 的北大公告列表解析：改抓真正公告內頁連結，避免誤用 `javascript:void(0)`。
+- crawler 標題抽取改優先使用公告連結 `title`，再退回列表文字。
+- crawler 新增 `--max-items` 與 `--match=keywords|all-news` 參數。
+- crawler 改為優先讀取 `scripts/crawler/sources.json`。
+- crawler console 新增來源列表與新增來源表單。
+- 生活組來源收窄到獎助、急難、補助、救助相關公告，並排除停車證等非 MVP 機會。
+- C0 文件同步 MVP 半自動流程：crawler 進 `raw_announcements`，人工打開 n8n 轉 draft，人工審核後才匯入 published opportunities。
+
+### Verified
+
+- `npm run crawl:c0` 成功抓到 7 筆 raw announcements。
+- `node scripts/crawler/crawl-source.mjs --max-items=20 --match=all-news` 成功抓到 15 筆 raw announcements。
+- `npm run crawl:export-raw-sql` 成功產出 15 筆 `raw_announcements` upsert SQL 草稿。
+
+### Notes
+
+- 本次沒有寫入 Supabase，沒有呼叫 Gemini，沒有寫入 `competitions(status = published)`，也沒有改前端或推薦流程。
 
 ## v0.8-D - 2026-06-29
 
@@ -43,6 +86,23 @@
 
 - 沒有新增學院或就讀階段輸入欄位。
 - 沒有新增第一版未確認的 filter label。
+
+## C0.4-C0.6 prep - 2026-06-29
+
+### Added
+
+- 新增 `scripts/crawler/export-raw-sql.mjs`，把 crawler raw JSON 轉成 `raw_announcements` upsert SQL 草稿，並保留 `scripts/crawler/export-raw-sql.ts` 作為型別版原型。
+- 新增 `scripts/crawler/crawl-source.mjs` 作為 Node 20 可直接執行的 crawler 入口。
+- 新增 `scripts/crawler/output/raw-announcements.sql` sample output。
+- 新增 `docs/C0_N8N_HANDOFF.md`，定義 n8n 未來角色與 handoff 格式。
+- 新增 `docs/C0_GEMINI_DRAFT_CONTRACT.md`，定義 Gemini input/output 草稿契約。
+- 新增 `docs/C0_REVIEW_CHECKLIST.md`，定義人工審核與發布 checklist。
+- `package.json` 新增 `npm run crawl:c0` 與 `npm run crawl:export-raw-sql`，目前指向 `.mjs` 執行入口。
+
+### Notes
+
+- 本版只準備 C0.4-C0.6 的 repo 端接口，不串接 n8n、不呼叫 Gemini、不寫入 Supabase、不發布 competitions。
+- n8n 未來只應做排程、raw ingestion、錯誤紀錄與流程編排；Gemini 只整理公開公告，不處理學生個資。
 
 ## v0.8-B - 2026-06-28
 
@@ -431,3 +491,14 @@
 
 - 在目前 Codex 沙盒中，`npm run dev` 與 `npm run lint` 會被本機權限限制擋住：`EPERM: operation not permitted, lstat 'C:\Users\xin'`。
 - 已用 TypeScript compiler API 替代檢查，當時結果為 0 個型別錯誤。
+# 2026-06-29 Gmail announcement digest
+
+- Added `docs/C0_GMAIL_ANNOUNCEMENT_DIGEST.md`.
+- School daily announcement Email is defined as an announcement discovery source, not a published-data source.
+- Gmail digest flow should extract candidate official URLs, then hand them back to crawler / raw announcements / draft / human review.
+- Product decision recorded: keep `劇集劇本創作獎` as `補助／計畫`; keep `天河教育基金會補助` but let frontend show it as `已截止` when its deadline is past.
+- Added short-term manual URL ingestion: `scripts/crawler/manual-urls.txt` and `npm run crawl:manual-urls`.
+- Manual URL crawl tested with 8 user-filtered NTPU bulletin URLs; raw SQL exported 8 rows and published review SQL exported 7 rows.
+- Old `bulletin.ntpu.edu.tw` pages now infer titles from the `公告標題` field instead of the generic HTML title `電子郵件公告`.
+- `opportunities` page is now forced dynamic so newly imported Supabase data appears without waiting for a static rebuild cache.
+- `教育部獎助外國學生短期研習本土語言計畫` is kept as a special case even though the text mentions courses; it is marked as qualification-needs-confirmation so it should not be prioritized.

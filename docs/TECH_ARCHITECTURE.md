@@ -138,7 +138,8 @@
 
 - v0.1 只做前端 demo。
 - 正式化後，公開公告頁爬蟲是主幹；每日公告 Email 只是輔助偵測來源。
-- n8n 負責抓資料、排程、URL 去重、content_hash 去重與關鍵字預篩。
+- MVP 階段採保守半自動流程：crawler 自動抓公開公告並進 `raw_announcements`，人工打開 n8n 才轉成 `draft_competitions`，人工審核 draft 後才匯入 published opportunities / `competitions(status = published)`。
+- n8n 在 MVP 階段負責人工觸發 raw-to-draft、流程編排、URL 去重、content_hash 去重與錯誤紀錄；正式化後再評估是否加入排程。
 - Gemini 只負責整理與分類公開公告，不負責爬文，也不處理學生資料。
 - 學生資料未登入時存在 localStorage；登入或設定提醒後才進資料庫。
 - 推薦演算法由前端／後端規則處理，不交給 AI；使用者端只顯示推薦標籤與原因，不顯示分數。

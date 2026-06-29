@@ -1,0 +1,9 @@
+sourceKey: manual_ntpu_bulletin_urls
+sourceName: 人工篩選北大公告 URL
+title: 【轉知】中鼎教育基金會辦理「 2026鏡頭裡的綠色行動」永續短影音競賽
+url: https://bulletin.ntpu.edu.tw/bulletin_content.php?no=20260615095628883126
+postedDate: 2026-06-15
+contentHash: b5d441074796c3f0763d5555a4a74a09bbb37441226b16bc2d72ad613046d7ed
+matchedKeywords: 競賽, 報名
+
+國立臺北大學 電子郵件公告 English Version 電子郵件公告 公告日期 2026-06-15 09:56:28 公告單位 永續辦公室 公告人 永續辦公室 聯絡方式 68039 公告標題 【轉知】中鼎教育基金會辦理「 2026鏡頭裡的綠色行動」永續短影音競賽 公告內容 一、中鼎教育基金會辦理「 2026鏡頭裡的綠色行動」永續短影音競賽，歡迎校內師生員工報名參加。 二、詳如附件。 附件 附件1：

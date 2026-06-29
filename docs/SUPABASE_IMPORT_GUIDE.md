@@ -163,6 +163,57 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=你的 anon key
 - 若列表看不到 sample，先點「放寬篩選」確認 Supabase 是否讀得到資料。
 - 真實來源 sample 仍需人工確認，不能視為正式資料庫內容。
 
+## C0 crawler output 匯入流程
+
+爬蟲輸出分成兩種匯入目的：
+
+1. raw staging：保存公告原文，供後續審核與轉換。
+2. published competitions：替換前台 demo/sample 資料，會直接出現在 `/opportunities`。
+
+目前 crawler 會輸出：
+
+- `scripts/crawler/output/sample-announcements.json`
+- `scripts/crawler/output/crawler-report.json`
+- `scripts/crawler/output/raw-announcements.sql`
+- `scripts/crawler/output/published-opportunities.review.sql`
+- `scripts/crawler/output/text/`
+
+raw staging 匯入：
+
+```text
+npm run crawl:c0
+npm run crawl:export-raw-sql
+```
+
+接著在 Supabase SQL editor 執行：
+
+```text
+docs/SUPABASE_STAGING_SCHEMA.sql
+scripts/crawler/output/raw-announcements.sql
+```
+
+這一步只會寫入 `raw_announcements`，不會出現在前台。
+
+替換前台 demo/sample 資料：
+
+```text
+npm run crawl:export-published-sql
+```
+
+接著人工檢查：
+
+```text
+scripts/crawler/output/published-opportunities.review.sql
+```
+
+確認截止日、資格、獎金、機會類型與第一版範圍都正確後，再貼到 Supabase SQL editor 執行。這個 SQL 會刪除 `https://example.com/%` demo 資料，並 upsert 到 `competitions(status = 'published')`。
+
+注意：
+
+- `published-opportunities.review.sql` 是替換 demo 用的發布草稿，不是全自動審核結果。
+- crawler 可能抓到課程、說明會、活動公告、急難救助、一般文化推廣計畫、草案預告或評審推薦表；這些不放進第一版前台資料，不可直接全部發布。
+- 若要前台讀 Supabase，`.env.local` 需設定 `NEXT_PUBLIC_USE_MOCK_DATA=false` 並填入 Supabase URL 與 anon key。
+
 ## v0.5-A Google Login + profiles
 
 v0.5-A 需要先在 Supabase Auth 啟用 Google provider，並執行 `docs/SUPABASE_AUTH_SCHEMA.sql`。

@@ -102,11 +102,49 @@ const SOURCES: SourceConfig[] = [
     sourceType: "school_public_page",
     listUrl: "https://new.ntpu.edu.tw/osa/life",
     allowedUrlPrefix: "https://new.ntpu.edu.tw/osa/",
-    includeKeywords: ["獎學金", "助學金", "急難", "補助", "申請", "獎助"],
-    excludeKeywords: DEFAULT_EXCLUDE_KEYWORDS,
+    includeKeywords: ["獎學金", "助學金", "急難", "補助", "獎助", "救助"],
+    excludeKeywords: [...DEFAULT_EXCLUDE_KEYWORDS, "停車證", "汽車停車"],
     maxItems: 10,
   },
 ];
+
+type CrawlerOptions = {
+  maxItems: number | null;
+  matchMode: "keywords" | "all-news";
+};
+
+function readOptions(argv: string[]): CrawlerOptions {
+  const options: CrawlerOptions = {
+    maxItems: null,
+    matchMode: "keywords",
+  };
+
+  for (const arg of argv) {
+    if (arg.startsWith("--max-items=")) {
+      const value = Number(arg.slice("--max-items=".length));
+      if (Number.isInteger(value) && value > 0 && value <= 100) {
+        options.maxItems = value;
+      }
+    }
+
+    if (arg.startsWith("--match=")) {
+      const value = arg.slice("--match=".length);
+      if (value === "keywords" || value === "all-news") {
+        options.matchMode = value;
+      }
+    }
+  }
+
+  return options;
+}
+
+function sourceWithOptions(source: SourceConfig, options: CrawlerOptions): SourceConfig & { matchMode: CrawlerOptions["matchMode"] } {
+  return {
+    ...source,
+    maxItems: options.maxItems ?? source.maxItems,
+    matchMode: options.matchMode,
+  };
+}
 
 function normalizeWhitespace(value: string): string {
   return value.replace(/\s+/g, " ").trim();
@@ -173,33 +211,48 @@ function parseListItems(html: string, source: SourceConfig): { items: ListItem[]
   const items: ListItem[] = [];
   const seenUrls = new Set<string>();
   const listItemPattern = /<li\b[^>]*>([\s\S]*?)<\/li>/gi;
+  const linkPattern = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
   let scannedItems = 0;
   let duplicateUrls = 0;
 
   for (const match of html.matchAll(listItemPattern)) {
     const [, itemHtml] = match;
-    const hrefMatch = itemHtml.match(/<a\b[^>]*href=["']([^"']+)["'][^>]*>/i);
-    if (!hrefMatch) continue;
+    const links = Array.from(itemHtml.matchAll(linkPattern)).map((linkMatch) => {
+      const [, attrs, linkHtml] = linkMatch;
+      const href = attrs.match(/\bhref=["']([^"']+)["']/i)?.[1] ?? "";
+      const title = attrs.match(/\btitle=["']([^"']*)["']/i)?.[1] ?? "";
+      return {
+        href,
+        title: normalizeWhitespace(decodeHtml(title)),
+        text: stripHtml(linkHtml),
+      };
+    });
+    const usableLink = links.find((link) => {
+      const href = decodeHtml(link.href).trim();
+      return href && !href.toLowerCase().startsWith("javascript:");
+    });
+    if (!usableLink) continue;
 
     scannedItems += 1;
     const dateMatch = itemHtml.match(/([0-9]{4}\s*[/-]\s*[0-9]{1,2}\s*[/-]\s*[0-9]{1,2})/);
-    const title = stripHtml(
-      itemHtml
-        .replace(/<a\b[\s\S]*?<\/a>/gi, " ")
-        .replace(dateMatch?.[0] ?? "", " "),
-    )
+    const titleSource =
+      usableLink.title ||
+      links.find((link) => link.text && !link.text.includes("在新分頁開啟公告全文"))?.text ||
+      stripHtml(itemHtml.replace(dateMatch?.[0] ?? "", " "));
+    const title = normalizeWhitespace(titleSource)
       .replace(/^在新分頁開啟公告全文\s*/u, "")
       .trim();
+    const url = toAbsoluteUrl(usableLink.href, source.listUrl);
 
     if (!title || title.length < 4 || title.includes("GENERAL.") || title.includes("SYSTEM.")) {
       continue;
     }
 
-    const matchedKeywords = matchedKeywordsFor(title, source);
-    if (matchedKeywords.length === 0) continue;
+    if (!url.includes("/news/")) continue;
 
-    const [, href] = hrefMatch;
-    const url = toAbsoluteUrl(href, source.listUrl);
+    const matchedKeywords = matchedKeywordsFor(title, source);
+    if ("matchMode" in source && source.matchMode !== "all-news" && matchedKeywords.length === 0) continue;
+
     if (!url.startsWith(source.allowedUrlPrefix)) continue;
 
     if (seenUrls.has(url)) {
@@ -317,12 +370,14 @@ async function crawlSource(source: SourceConfig, fetchedAt: string): Promise<{ a
 }
 
 async function crawl(): Promise<{ announcements: Announcement[]; report: CrawlerReport }> {
+  const options = readOptions(process.argv.slice(2));
   const fetchedAt = new Date().toISOString();
   const allAnnouncements: Announcement[] = [];
   const sourceReports: CrawlerReport["sources"] = [];
   const seenSourceItems = new Set<string>();
 
-  for (const source of SOURCES) {
+  for (const baseSource of SOURCES) {
+    const source = sourceWithOptions(baseSource, options);
     const result = await crawlSource(source, fetchedAt);
 
     for (const announcement of result.announcements) {

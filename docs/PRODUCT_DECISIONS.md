@@ -143,6 +143,13 @@
 - C0.3 只建立 staging 資料模型與人工工作台，不啟用自動排程。
 - 未來若接 Gemini 或 n8n，只能處理公開公告資料，不可接觸學生個資。
 
+## MVP crawler / n8n 決策
+
+- MVP 採保守半自動流程：爬蟲自動抓公開公告並進 `raw_announcements`，人工打開 n8n 才轉成 draft，人工審核 draft 後才匯入 published opportunities。
+- crawler 不直接寫入 `draft_competitions` 或 `competitions(status = published)`。
+- n8n 初期不完全自動排程發布，只作為人工觸發的 raw-to-draft 編排層。
+- 任何低信心、不屬於第一版核心、資訊不足或可能已過期的公告，都不得發布到前台。
+
 ## v0.8-A 決策
 
 - 因為需要向組員展示 demo，online deployment 需求提前插隊。
