@@ -77,12 +77,14 @@ https://ntpu-opportunity-platform.vercel.app/api/reminders/send-due?secret=<CRON
 
 `ignoreTime=1` 只建議測試使用，會略過使用者設定的寄送小時。
 
-正式排程可由 Vercel Cron 或 n8n 每小時呼叫一次：
+正式排程可由 Vercel Cron 或 n8n 呼叫：
 
 ```text
 GET /api/reminders/send-due
 Authorization: Bearer <CRON_SECRET>
 ```
+
+Vercel Hobby 方案只支援每日 cron。`vercel.json` 目前設定為每日 UTC 01:00，也就是台灣時間 09:00 檢查一次。若要完整支援使用者自訂寄送時間，後續可改由 n8n 或升級 Vercel 方案後提高排程頻率。
 
 ## 6. 目前邊界
 
