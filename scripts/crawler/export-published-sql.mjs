@@ -54,7 +54,7 @@ const MANUAL_OVERRIDES = [
     department_limit: "不限",
     grade_limit: "不限；但創新競賽組限國中生",
     eligibility_text: "議題實踐組：15至35歲青年；創新競賽組：國中生限定。實際資格依官方簡章為準。",
-    prize_text: "總獎金達新臺幣90萬元",
+    prize_text: "總獎金 900,000 元",
     reward_types: ["獎金"],
     max_prize_amount: null,
     schedule: [

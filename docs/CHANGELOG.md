@@ -15,6 +15,7 @@
 - 本階段只處理「獎學金」資料匯入準備，不新增登入、提醒或新機會類型。
 - 獎學金 rows 會使用 `opportunity_type = '獎學金'`；`reward_types` 維持金錢型的 `獎金`，避免和機會類型重複。
 - `prize_text` 只放列表用短文字，例如「最高 50,000 元」；名額、分組與其他獎項細節放入 `special_notes` 或詳情內容。
+- 另新增 `scripts/crawler/output/fix-prize-text.review.sql`，可修正已匯入 Supabase 的一般比賽與獎學金獎金欄位。
 - 校內獎學金詳情頁本身作為官方頁面，`official_url` 暫填北大校內獎學金官方詳情頁。
 - 多數目前抓到的獎學金已截止，匯入後會依現有前台規則預設隱藏，使用者切換「顯示已截止」才會看到。
 - 系所／學院獎學金本批整理 9 筆，其中 2 筆可作為 `published` 已截止資料，其餘先保留 `needs_review`。
