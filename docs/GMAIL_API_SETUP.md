@@ -49,10 +49,13 @@ docs/SUPABASE_NOTIFICATION_LOGS_SCHEMA.sql
 2. 登入網站。
 3. 打開任一 `/opportunities/[id]`。
 4. 在提醒設定中填入 Email。
-5. 先儲存提醒設定。
-6. 點「寄送測試信」。
-7. 收到測試信後，Supabase `reminder_settings.email_verified` 應為 `true`。
-8. Supabase `notification_logs` 應出現一筆 `email_test` 紀錄。
+5. 點「寄送測試信」。
+6. 收到測試信後，Supabase `reminder_settings.email_verified` 應為 `true`。
+7. Supabase `notification_logs` 應出現一筆 `email_test` 紀錄。
+
+如果前台顯示「測試信已寄出，但資料庫紀錄更新失敗」，代表 Gmail API 已可寄送，接著檢查 `reminder_settings` / `notification_logs` schema、foreign key 與 RLS。
+
+如果前台顯示 Gmail 授權失敗，通常需要重新產生 `GMAIL_REFRESH_TOKEN`，並確認 scope 包含 `https://www.googleapis.com/auth/gmail.send`。
 
 ## 目前不做
 
@@ -61,4 +64,3 @@ docs/SUPABASE_NOTIFICATION_LOGS_SCHEMA.sql
 - 不做批次寄送。
 - 不寄廣告信。
 - 不把 Email 內容交給 AI 生成。
-

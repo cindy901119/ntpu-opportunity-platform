@@ -5,6 +5,7 @@ type GmailSendResult = {
 
 const tokenUrl = "https://oauth2.googleapis.com/token";
 const sendUrl = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send";
+const gmailEnvNames = ["GMAIL_CLIENT_ID", "GMAIL_CLIENT_SECRET", "GMAIL_REFRESH_TOKEN", "GMAIL_SENDER_EMAIL"] as const;
 
 function requiredEnv(name: string) {
   const value = process.env[name];
@@ -17,12 +18,11 @@ function requiredEnv(name: string) {
 }
 
 export function hasGmailConfig() {
-  return Boolean(
-    process.env.GMAIL_CLIENT_ID &&
-      process.env.GMAIL_CLIENT_SECRET &&
-      process.env.GMAIL_REFRESH_TOKEN &&
-      process.env.GMAIL_SENDER_EMAIL,
-  );
+  return getMissingGmailConfig().length === 0;
+}
+
+export function getMissingGmailConfig() {
+  return gmailEnvNames.filter((name) => !process.env[name]);
 }
 
 function encodeHeader(value: string) {
@@ -119,4 +119,3 @@ export async function sendGmailMessage({
 
   return (await response.json()) as GmailSendResult;
 }
-

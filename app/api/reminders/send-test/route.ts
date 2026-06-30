@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { hasGmailConfig, sendGmailMessage } from "@/src/lib/gmail";
+import { getMissingGmailConfig, hasGmailConfig, sendGmailMessage } from "@/src/lib/gmail";
 import { getSupabaseServerClient, getUserFromRequest } from "@/src/lib/supabase/server-auth";
 
 type TestEmailRequest = {
@@ -11,6 +11,29 @@ function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function classifySendError(error: unknown) {
+  const message = error instanceof Error ? error.message : "Unknown error";
+
+  if (message.includes("Gmail token exchange failed")) {
+    return {
+      code: "gmail_token_failed",
+      detail: "Gmail 授權失敗，請重新產生 refresh token，並確認 scope 包含 gmail.send。",
+    };
+  }
+
+  if (message.includes("Gmail send failed")) {
+    return {
+      code: "gmail_send_failed",
+      detail: "Gmail API 拒絕寄送，請確認寄件帳號、Gmail API 權限與 OAuth consent screen。",
+    };
+  }
+
+  return {
+    code: "send_failed",
+    detail: "測試信寄送失敗，請查看 Vercel logs 或 notification_logs。",
+  };
+}
+
 export async function POST(request: Request) {
   const { token, user } = await getUserFromRequest(request);
 
@@ -19,7 +42,7 @@ export async function POST(request: Request) {
   }
 
   if (!hasGmailConfig()) {
-    return NextResponse.json({ error: "gmail_not_configured" }, { status: 503 });
+    return NextResponse.json({ error: "gmail_not_configured", missing: getMissingGmailConfig() }, { status: 503 });
   }
 
   const body = (await request.json()) as TestEmailRequest;
@@ -49,18 +72,19 @@ export async function POST(request: Request) {
 
     providerMessageId = result.id ?? null;
 
-    await supabase
-      .from("reminder_settings")
-      .update({
+    const { error: reminderError } = await supabase.from("reminder_settings").upsert(
+      {
+        user_id: user.id,
+        opportunity_id: opportunityId,
         notification_email: email,
         email_verified: true,
         email_test_sent_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      })
-      .eq("user_id", user.id)
-      .eq("opportunity_id", opportunityId);
+      },
+      { onConflict: "user_id,opportunity_id" },
+    );
 
-    await supabase.from("notification_logs").insert({
+    const { error: logError } = await supabase.from("notification_logs").insert({
       user_id: user.id,
       opportunity_id: opportunityId,
       notification_type: "email_test",
@@ -71,8 +95,14 @@ export async function POST(request: Request) {
       sent_at: new Date().toISOString(),
     });
 
-    return NextResponse.json({ status: "sent", providerMessageId });
+    return NextResponse.json({
+      status: "sent",
+      providerMessageId,
+      persistenceWarning: reminderError || logError ? "email_sent_but_database_update_failed" : null,
+    });
   } catch (error) {
+    const classified = classifySendError(error);
+
     await supabase.from("notification_logs").insert({
       user_id: user.id,
       opportunity_id: opportunityId,
@@ -85,7 +115,6 @@ export async function POST(request: Request) {
       sent_at: new Date().toISOString(),
     });
 
-    return NextResponse.json({ error: "send_failed" }, { status: 500 });
+    return NextResponse.json({ error: classified.code, detail: classified.detail }, { status: 500 });
   }
 }
-

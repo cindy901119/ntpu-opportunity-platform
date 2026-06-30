@@ -163,29 +163,30 @@ export function ReminderControl({ opportunityId }: { opportunityId: string }) {
             type="button"
             onClick={async () => {
               setSendingTest(true);
-              const saveResult = await saveReminderSetting(setting);
-
-              if (saveResult !== "saved") {
-                setSendingTest(false);
-                setStatus(saveResult === "signed-out" ? "登入後可以寄送測試信。" : "請先確認提醒設定可以儲存。");
-                return;
-              }
-
               const result = await sendReminderTestEmail(setting);
               setSendingTest(false);
 
-              if (result === "sent") {
+              if (result.status === "sent") {
                 setSetting((current) => ({ ...current, emailVerified: true }));
-                setStatus("測試信已寄出。請到信箱確認是否收到。");
+                setStatus(
+                  result.persistenceWarning
+                    ? "測試信已寄出，但資料庫紀錄更新失敗。請到信箱確認是否收到，並稍後檢查提醒設定。"
+                    : "測試信已寄出。請到信箱確認是否收到。",
+                );
                 return;
               }
 
-              if (result === "gmail-not-configured") {
-                setStatus("Gmail API 尚未設定完成，請確認環境變數。");
+              if (result.status === "gmail-not-configured") {
+                setStatus(result.detail ?? "Gmail API 尚未設定完成，請確認環境變數。");
                 return;
               }
 
-              setStatus(result === "signed-out" ? "登入後可以寄送測試信。" : "測試信寄送失敗，請稍後再試。");
+              if (result.status === "signed-out") {
+                setStatus("登入後可以寄送測試信。");
+                return;
+              }
+
+              setStatus(result.detail ?? "測試信寄送失敗，請稍後再試。");
             }}
             disabled={sendingTest || saving}
             className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-4 py-3 font-semibold text-[var(--action)] disabled:opacity-60"

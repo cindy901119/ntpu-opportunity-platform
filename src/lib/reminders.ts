@@ -100,14 +100,14 @@ export async function sendReminderTestEmail(setting: ReminderSetting) {
   const user = await getCurrentReminderUser();
 
   if (!user) {
-    return "signed-out" as const;
+    return { status: "signed-out" as const };
   }
 
   const { data } = await getSupabaseAuthClient().auth.getSession();
   const token = data.session?.access_token;
 
   if (!token) {
-    return "signed-out" as const;
+    return { status: "signed-out" as const };
   }
 
   const response = await fetch("/api/reminders/send-test", {
@@ -122,13 +122,34 @@ export async function sendReminderTestEmail(setting: ReminderSetting) {
     }),
   });
 
+  const responseData = (await response.json().catch(() => ({}))) as {
+    error?: string;
+    detail?: string;
+    missing?: string[];
+    persistenceWarning?: string | null;
+  };
+
   if (response.status === 401) {
-    return "signed-out" as const;
+    return { status: "signed-out" as const };
   }
 
   if (response.status === 503) {
-    return "gmail-not-configured" as const;
+    return {
+      status: "gmail-not-configured" as const,
+      detail: responseData.missing?.length ? `缺少環境變數：${responseData.missing.join("、")}` : undefined,
+    };
   }
 
-  return response.ok ? ("sent" as const) : ("error" as const);
+  if (response.ok) {
+    return {
+      status: "sent" as const,
+      persistenceWarning: responseData.persistenceWarning ?? null,
+    };
+  }
+
+  return {
+    status: "error" as const,
+    detail: responseData.detail,
+    error: responseData.error,
+  };
 }

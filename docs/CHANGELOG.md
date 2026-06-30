@@ -6,6 +6,8 @@
 
 - 移除一般比賽 `special_notes` 中誤放到前台的內部資料清理紀錄，避免詳情頁出現「原 title 已清理」「topic_areas 錯誤」這類工作備註。
 - 新增 `scripts/crawler/output/fix-special-notes.review.sql`，可修正已匯入 Supabase 的特別注意內容。
+- 修正提醒測試信流程：寄送測試信不再被「提醒設定儲存失敗」擋住，Gmail API 成功與資料庫紀錄失敗會分開顯示。
+- 測試信 API 會回傳較明確的錯誤狀態，例如 Gmail 環境變數未設定、refresh token 授權失敗或 Gmail API 拒絕寄送。
 
 ### Added
 
