@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## v0.10-C - 2026-07-01
+
+### Fixed
+
+- 移除一般比賽 `special_notes` 中誤放到前台的內部資料清理紀錄，避免詳情頁出現「原 title 已清理」「topic_areas 錯誤」這類工作備註。
+- 新增 `scripts/crawler/output/fix-special-notes.review.sql`，可修正已匯入 Supabase 的特別注意內容。
+
+### Added
+
+- 新增 `scripts/crawler/output/check-scholarships.review.sql`，用來確認獎學金資料是否已匯入、目前狀態是否為 `published`，以及是否多數已截止而被前台預設隱藏。
+
 ## v0.10-B - 2026-06-30
 
 ### Fixed

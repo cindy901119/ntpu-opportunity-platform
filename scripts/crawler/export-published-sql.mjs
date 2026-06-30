@@ -62,11 +62,7 @@ const MANUAL_OVERRIDES = [
       { date: "2026-07-27T23:59:00+08:00", label: "創新競賽組報名截止" },
     ],
     summary: "以地方文化、數位工具與青年行動為主題，徵求可實作的社會議題方案。",
-    special_notes: [
-      "原 title 多了「活動」，已清理。",
-      "官方簡章連結已改為嘉義市政府青年實驗室競賽公告頁。",
-      "school_limit 不可填國立臺北大學。",
-    ],
+    special_notes: ["實際分組、資格與交件規則請以官方簡章為準。"],
   },
   {
     pattern: /AIxESG|U-STEP永續行動獎/,
@@ -88,9 +84,6 @@ const MANUAL_OVERRIDES = [
     schedule: [{ date: "2026-07-31T17:00:00+08:00", label: "徵件截止" }],
     summary: "以 AI 與 ESG 為主題，徵求全國大專校院學生提出永續行動方案。",
     special_notes: [
-      "原 title 是促銷式公告標題，已改為正式活動名。",
-      "official_url 已補臺北聯合大學系統官方公告頁。",
-      "原 submission_types 含影片錯誤，已改為提案計畫書、參賽聲明書與在學證明。",
       "前20組完成報名且通過資格審查者，每隊另有1,000元獎勵金，依官方簡章為準。",
     ],
   },
@@ -116,11 +109,7 @@ const MANUAL_OVERRIDES = [
       { date: "2026-12-04T13:20:00+08:00", label: "決賽暨頒獎" },
     ],
     summary: "徵求圖案設計作品，採線上報名與作品上傳，入圍者需參加現場決賽。",
-    special_notes: [
-      "原 title 多餘引號與「競賽」尾詞，已清理。",
-      "原 topic_areas 含科技／程式錯誤，已改為設計／創作。",
-      "原 submission_types 含影片、作品集錯誤，已改為報名表與圖案作品檔案。",
-    ],
+    special_notes: ["入圍者需依官方通知參加決賽暨頒獎活動。"],
   },
   {
     pattern: /國家公園保育研討會青年論文徵文競賽/,
@@ -149,9 +138,6 @@ const MANUAL_OVERRIDES = [
     ],
     summary: "徵求國家公園、海岸、濕地與海洋生態保育相關研究或小論文。",
     special_notes: [
-      "原 title 是轉知公告句，已清理成活動正式名稱。",
-      "原 official_url 是短網址，已改國家公園署主題網官方頁。",
-      "原 deadline 為 null 錯誤，已補投稿截止日。",
       "另有其他名次與小論文組獎項，依官方簡章為準。",
     ],
   },
@@ -177,9 +163,7 @@ const MANUAL_OVERRIDES = [
     schedule: [],
     summary: "以 LINE 社群作為共學基地，鼓勵學生跨域組隊整理資訊、共創知識。",
     special_notes: [
-      "原 title 含 emoji 裝飾，已清理。",
       "此活動依多個主題分期執行，不硬填單一 deadline。",
-      "原 official_url 是短網址，已展開為北大教務處官方頁。",
       "另有單場人氣獎、年度個人獎與年度團隊獎，依官方簡章為準。",
     ],
   },
@@ -210,9 +194,6 @@ const MANUAL_OVERRIDES = [
     ],
     summary: "以永續行動為主題徵求短影音作品，鼓勵用影像呈現綠色行動。",
     special_notes: [
-      "原 title 含主辦單位與「辦理」，已清理。",
-      "official_url 已補中鼎教育基金會官方活動頁。",
-      "不建議放科技／程式，已改為設計／創作與社會／永續。",
       "另有第二名、第三名與獎狀，依官方簡章為準。",
     ],
   },
@@ -243,11 +224,7 @@ const MANUAL_OVERRIDES = [
       { date: "2026-11", label: "頒獎典禮" },
     ],
     summary: "以海洋保育為主題徵求創意短影音，鼓勵用影像呈現人與海洋的關係。",
-    special_notes: [
-      "原 title 含主辦單位與引號，已清理。",
-      "official_url 已補海洋保育署官方活動頁。",
-      "max_prize_amount 不填總獎金700000，改填單一最高獎項85000。",
-    ],
+    special_notes: ["另有不同組別與獎項，依官方簡章為準。"],
   },
   {
     pattern: /獎助外國學生短期研習本土語言/,
@@ -271,9 +248,7 @@ const MANUAL_OVERRIDES = [
     status: "needs_review",
     summary: "補助外國學生研習臺灣本土語言，申請資格與程序需依官方計畫確認。",
     special_notes: [
-      "這筆不是競賽，不應發布到 competitions MVP。",
-      "原 title 含引號、空格與「徵件」，已清理。",
-      "目前未找到教育部原始官方頁，只找到多校轉知與附件，若 MVP 僅發布競賽請排除。",
+      "本筆需確認官方原始頁與完整申請規則後再發布。",
     ],
   },
 ];
@@ -497,7 +472,7 @@ function toOpportunity(announcement) {
     reward_types: override?.reward_types ?? rewardTypes,
     max_prize_amount: Object.hasOwn(override ?? {}, "max_prize_amount") ? override.max_prize_amount : maxPrizeAmount,
     summary: override?.summary ?? inferSummary(text),
-    special_notes: override?.special_notes ?? ["此筆由爬蟲結果轉為發布草稿，請人工確認截止日、資格與獎金。"],
+    special_notes: override?.special_notes ?? ["報名前請確認官方簡章完整規則。"],
     participation_text: /團隊/.test(text) ? "個人或團隊，依官方簡章" : "依官方簡章",
     schedule:
       override?.schedule ?? (deadline ? [{ date: `${Number(deadline.slice(5, 7))}/${Number(deadline.slice(8, 10))}`, label: "報名截止" }] : []),
