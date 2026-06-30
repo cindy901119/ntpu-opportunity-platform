@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "北大機會雷達",
-  description: "北大與北聯大學生的機會推薦 Web App",
+  title: "北大版機會雷達",
+  description: "北大學生的機會推薦 Web App",
 };
 
 export default function RootLayout({

@@ -142,13 +142,15 @@ export default async function OpportunityDetailPage({
           </Section>
 
           <Section title="官方資料" full>
-            <Rows
-              rows={[
-                ["官方簡章", "報名前建議打開確認完整規則。"],
-                ["官方連結", officialUrl ?? "尚未擷取到真正官方簡章，需人工補上。"],
-                ["北大公告", opportunity.sourceUrl],
-              ]}
-            />
+            <div className="space-y-2">
+              <p className="text-sm leading-7 text-[var(--muted)]">報名前建議打開官方資料確認完整規則。</p>
+              {officialUrl ? (
+                <TextLink href={officialUrl}>查看官方簡章</TextLink>
+              ) : (
+                <p className="text-sm font-semibold text-[var(--attention)]">官方簡章待補</p>
+              )}
+              {!officialUrl && opportunity.sourceUrl ? <TextLink href={opportunity.sourceUrl}>查看北大公告</TextLink> : null}
+            </div>
           </Section>
 
           <div className="md:col-span-2">
@@ -219,5 +221,18 @@ function Rows({ rows }: { rows: [string, string][] }) {
         </div>
       ))}
     </div>
+  );
+}
+
+function TextLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex text-sm font-semibold text-[var(--action)] underline underline-offset-4"
+    >
+      {children}
+    </a>
   );
 }

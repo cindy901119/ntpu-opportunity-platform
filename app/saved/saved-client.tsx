@@ -58,10 +58,10 @@ export function SavedClient({ opportunities }: { opportunities: Opportunity[] })
 
       {ready && results.length === 0 ? (
         <EmptyState
-          title="還沒有收藏"
+          title="你還沒有收藏任何機會"
           description="看到想晚點再看的機會，可以先按收藏。"
           actionHref="/opportunities"
-          actionLabel="查看機會"
+          actionLabel="去看機會"
         />
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">

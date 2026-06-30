@@ -16,7 +16,7 @@ export function Navbar() {
     <nav className="sticky top-0 z-10 border-b border-[var(--line)] bg-[rgba(236,229,217,.92)] px-4 py-3 backdrop-blur">
       <div className="mx-auto flex max-w-[760px] items-center justify-between gap-4">
         <Link href="/" className="text-lg font-semibold tracking-wide text-[var(--text)]">
-          北大機會雷達
+          北大版機會雷達
         </Link>
         <div className="flex gap-1">
           {items.map((item) => {

@@ -43,7 +43,7 @@ export const defaultPreferences: UserPreferences = {
   },
   interests: [],
   skills: [],
-  preferredOpportunityTypes: ["比賽", "獎學金", "補助／計畫"],
+  preferredOpportunityTypes: [],
   topicAreas: [],
   deadlineFilters: [],
   rewardTypes: [],

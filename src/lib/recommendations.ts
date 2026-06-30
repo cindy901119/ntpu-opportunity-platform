@@ -9,6 +9,11 @@ import { getDaysUntilDeadline } from "@/src/lib/format";
 
 const TUA_SCHOOLS = ["國立臺北大學", "國立臺北科技大學", "臺北醫學大學", "國立臺灣海洋大學"];
 const INCOMPLETE_WARNING = "公告資訊不完整，報名前建議確認官方簡章。";
+const opportunityTypeOptions = ["比賽", "獎學金", "補助／計畫", "其他"];
+const topicAreaOptions = ["商業／企劃", "創業／新創", "科技／程式", "法政／公共議題", "社會／永續", "不限／不適用", "人文／寫作", "語言／國際", "設計／創作", "其他"];
+const deadlineFilterOptions = ["三天內", "一週內", "一個月內", "一個月以上", "截止日未明"];
+const rewardTypeOptions = ["獎金", "獎品", "證書", "補助", "無明確獎勵", "未寫清楚"];
+const PRIZE_AMOUNT_LIMIT = 100000;
 
 export function inferStudyLevel(grade: string) {
   if (["大一", "大二", "大三", "大四"].includes(grade)) {
@@ -27,7 +32,7 @@ function intersect(a: string[], b: string[]) {
 }
 
 function matchesDeadlineFilters(opportunity: Opportunity, filters: UserPreferences["deadlineFilters"]) {
-  if (!filters.length) {
+  if (!isFilterGroupActive(filters, deadlineFilterOptions)) {
     return true;
   }
 
@@ -53,16 +58,24 @@ function matchesFilters(opportunity: Opportunity, preferences: UserPreferences) 
   const legacyMinPrize = preferences.maxPrizeAmount ?? 0;
   const minPrize = preferences.prizeAmountMin ?? legacyMinPrize;
   const maxPrize = preferences.prizeAmountMax ?? 0;
-  const usesPrizeFilter = Boolean(minPrize || maxPrize);
+  const usesPrizeFilter = Boolean(minPrize || (maxPrize && maxPrize < PRIZE_AMOUNT_LIMIT));
   const prizeAmount = opportunity.maxPrizeAmount ?? 0;
 
   return (
-    (!preferences.preferredOpportunityTypes.length || preferences.preferredOpportunityTypes.includes(opportunity.opportunityType)) &&
-    (!preferences.topicAreas.length || intersect(opportunity.topicAreas, preferences.topicAreas).length > 0) &&
+    (!isFilterGroupActive(preferences.preferredOpportunityTypes, opportunityTypeOptions) || preferences.preferredOpportunityTypes.includes(opportunity.opportunityType)) &&
+    (!isFilterGroupActive(preferences.topicAreas, topicAreaOptions) || intersect(opportunity.topicAreas, preferences.topicAreas).length > 0) &&
     matchesDeadlineFilters(opportunity, preferences.deadlineFilters) &&
-    (!preferences.rewardTypes.length || intersect(opportunity.rewardTypes, preferences.rewardTypes).length > 0) &&
+    (!isFilterGroupActive(preferences.rewardTypes, rewardTypeOptions) || intersect(opportunity.rewardTypes, preferences.rewardTypes).length > 0) &&
     (!usesPrizeFilter || (prizeAmount >= minPrize && (!maxPrize || prizeAmount <= maxPrize)))
   );
+}
+
+export function isFilterGroupActive(selected: readonly string[], allOptions: readonly string[]) {
+  if (!selected.length) {
+    return false;
+  }
+
+  return new Set(selected).size < allOptions.length;
 }
 
 function daysUntil(deadline: string) {
@@ -231,7 +244,7 @@ function getMatchedReasons(opportunity: Opportunity, preferences: UserPreference
   );
   const highlightMatches = getHighlightMatches(opportunity, preferences.highlightTags);
 
-  if (preferences.preferredOpportunityTypes.includes(opportunity.opportunityType)) {
+  if (isFilterGroupActive(preferences.preferredOpportunityTypes, opportunityTypeOptions) && preferences.preferredOpportunityTypes.includes(opportunity.opportunityType)) {
     reasons.push(`你偏好${opportunity.opportunityType}，這筆資料屬於${opportunity.opportunityType}。`);
   }
 
@@ -239,9 +252,11 @@ function getMatchedReasons(opportunity: Opportunity, preferences: UserPreference
     reasons.push(`你設定了 ${topic} 為感興趣主題。`);
   });
 
-  areaMatches.forEach((area) => {
-    reasons.push(`你選擇了${area}主題領域。`);
-  });
+  if (isFilterGroupActive(preferences.topicAreas, topicAreaOptions)) {
+    areaMatches.forEach((area) => {
+      reasons.push(`你選擇了${area}主題領域。`);
+    });
+  }
 
   skillMatches.forEach((skill) => {
     reasons.push(`你填寫了${skill}能力，這個機會會用到相關能力。`);
@@ -261,10 +276,10 @@ function getMatchedReasons(opportunity: Opportunity, preferences: UserPreference
 function getPreferenceMatches(opportunity: Opportunity, preferences: UserPreferences) {
   const matches = [
     ...intersect(opportunity.topicTags, preferences.interests),
-    ...intersect(opportunity.topicAreas, preferences.topicAreas),
+    ...(isFilterGroupActive(preferences.topicAreas, topicAreaOptions) ? intersect(opportunity.topicAreas, preferences.topicAreas) : []),
     ...intersect(opportunity.skillTags, preferences.skills),
     ...intersect(opportunity.submissionTypes, preferences.preferredSubmissionTypes),
-    ...intersect(opportunity.rewardTypes, preferences.rewardTypes),
+    ...(isFilterGroupActive(preferences.rewardTypes, rewardTypeOptions) ? intersect(opportunity.rewardTypes, preferences.rewardTypes) : []),
     ...getHighlightMatches(opportunity, preferences.highlightTags),
   ];
 
@@ -297,11 +312,11 @@ function getWarnings(opportunity: Opportunity, qualification: "matched" | "uncer
 
 function scoreOpportunity(opportunity: Opportunity, preferences: UserPreferences) {
   let score = 0;
-  score += preferences.preferredOpportunityTypes.includes(opportunity.opportunityType) ? 18 : 0;
-  score += intersect(opportunity.topicAreas, preferences.topicAreas).length * 12;
+  score += isFilterGroupActive(preferences.preferredOpportunityTypes, opportunityTypeOptions) && preferences.preferredOpportunityTypes.includes(opportunity.opportunityType) ? 18 : 0;
+  score += (isFilterGroupActive(preferences.topicAreas, topicAreaOptions) ? intersect(opportunity.topicAreas, preferences.topicAreas).length : 0) * 12;
   score += intersect(opportunity.topicTags, preferences.interests).length * 12;
   score += intersect(opportunity.skillTags, preferences.skills).length * 10;
-  score += intersect(opportunity.rewardTypes, preferences.rewardTypes).length * 8;
+  score += (isFilterGroupActive(preferences.rewardTypes, rewardTypeOptions) ? intersect(opportunity.rewardTypes, preferences.rewardTypes).length : 0) * 8;
   score += intersect([...opportunity.submissionTypes, ...opportunity.firstStageDeliverables], preferences.preferredSubmissionTypes).length * 7;
   score += getHighlightMatches(opportunity, preferences.highlightTags).length * 6;
   return score;

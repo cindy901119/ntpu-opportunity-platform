@@ -6,8 +6,13 @@ import { OpportunityCard } from "@/src/components/OpportunityCard";
 import { Tag } from "@/src/components/Tag";
 import { getDaysUntilDeadline } from "@/src/lib/format";
 import { defaultPreferences, getPreferences, savePreferences } from "@/src/lib/localStorage";
-import { getRecommendations } from "@/src/lib/recommendations";
+import { getRecommendations, isFilterGroupActive } from "@/src/lib/recommendations";
 import type { Opportunity, UserPreferences } from "@/src/types";
+
+const opportunityTypeOptions = ["比賽", "獎學金", "補助／計畫", "其他"];
+const topicAreaOptions = ["商業／企劃", "創業／新創", "科技／程式", "法政／公共議題", "社會／永續", "不限／不適用", "人文／寫作", "語言／國際", "設計／創作", "其他"];
+const deadlineFilterOptions = ["三天內", "一週內", "一個月內", "一個月以上", "截止日未明"];
+const rewardTypeOptions = ["獎金", "獎品", "證書", "補助", "無明確獎勵", "未寫清楚"];
 
 export function OpportunitiesClient({ opportunities }: { opportunities: Opportunity[] }) {
   const [preferences, setPreferences] = useState<UserPreferences | null>(null);
@@ -30,6 +35,8 @@ export function OpportunitiesClient({ opportunities }: { opportunities: Opportun
       deadlineFilters: [],
       rewardTypes: [],
       maxPrizeAmount: 0,
+      prizeAmountMin: 0,
+      prizeAmountMax: 0,
     };
   }, [filtersRelaxed, preferences]);
 
@@ -42,13 +49,16 @@ export function OpportunitiesClient({ opportunities }: { opportunities: Opportun
     [includeExpired, results],
   );
   const expiredCount = results.length - visibleResults.length;
+  const prizeMin = effectivePreferences?.prizeAmountMin ?? effectivePreferences?.maxPrizeAmount ?? 0;
+  const prizeMax = effectivePreferences?.prizeAmountMax ?? 0;
+  const activePrizeFilter = Boolean(prizeMin || (prizeMax && prizeMax < 100000));
   const activeFilters = effectivePreferences
     ? [
-        ...effectivePreferences.preferredOpportunityTypes,
-        ...effectivePreferences.topicAreas,
-        ...effectivePreferences.deadlineFilters,
-        ...effectivePreferences.rewardTypes,
-        effectivePreferences.maxPrizeAmount ? `最高獎金 ${effectivePreferences.maxPrizeAmount.toLocaleString()}+` : "",
+        ...(isFilterGroupActive(effectivePreferences.preferredOpportunityTypes, opportunityTypeOptions) ? effectivePreferences.preferredOpportunityTypes : []),
+        ...(isFilterGroupActive(effectivePreferences.topicAreas, topicAreaOptions) ? effectivePreferences.topicAreas : []),
+        ...(isFilterGroupActive(effectivePreferences.deadlineFilters, deadlineFilterOptions) ? effectivePreferences.deadlineFilters : []),
+        ...(isFilterGroupActive(effectivePreferences.rewardTypes, rewardTypeOptions) ? effectivePreferences.rewardTypes : []),
+        activePrizeFilter ? `獎金 ${prizeMin.toLocaleString()}-${(prizeMax || 100000).toLocaleString()}` : "",
       ].filter(Boolean).slice(0, 8)
     : [];
 

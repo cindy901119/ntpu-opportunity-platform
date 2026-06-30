@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ChipSelector } from "@/src/components/ChipSelector";
 import {
@@ -30,6 +31,7 @@ const moreSubmissionTypes = ["短文", "作品集", "程式／Demo"];
 const highlightTags = ["北大限定", "北聯大限定", "可個人參加", "可組隊", "線上繳交"];
 
 export function PreferencesClient() {
+  const router = useRouter();
   const [form, setForm] = useState<UserPreferences>(defaultPreferences);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -132,20 +134,24 @@ export function PreferencesClient() {
 
     if (syncResult === "saved") {
       setSyncMessage("偏好已存在本機，也已同步到雲端。");
+      router.push("/opportunities");
       return;
     }
 
     if (syncResult === "profile-error") {
       setSyncMessage("偏好已同步到雲端，但基本資格 profile 同步失敗，請確認 profiles schema。");
+      router.push("/opportunities");
       return;
     }
 
     if (syncResult === "error") {
       setSyncMessage("偏好已存在本機，但雲端同步失敗，請確認 user_preferences schema。");
+      router.push("/opportunities");
       return;
     }
 
     setSyncMessage("偏好已存在本機。登入後可同步到雲端。");
+    router.push("/opportunities");
   }
 
   return (
