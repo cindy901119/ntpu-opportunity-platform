@@ -172,7 +172,7 @@ function mapCompetitionRow(row: CompetitionRow): Opportunity {
     title: row.title,
     organizer: row.organizer ?? "主辦單位待確認",
     sourceUrl: row.source_url ?? "",
-    officialUrl: row.official_url ?? row.source_url ?? "",
+    officialUrl: row.official_url ?? undefined,
     deadline,
     opportunityType: normalizeOpportunityType(row.opportunity_type),
     topicAreas: normalizeList(row.topic_areas, topicAreas, ["其他"]),

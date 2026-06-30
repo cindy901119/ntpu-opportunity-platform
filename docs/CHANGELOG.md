@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## v0.9-A - 2026-06-30
+
+### Added
+
+- 新增 `/auth/callback` Google OAuth 回跳頁，登入後會交換 session 並回到 `/account`。
+- 新增 server-only Supabase admin client，用於提醒排程查詢已驗證提醒設定。
+- 新增 `/api/reminders/send-due`，可由 Vercel Cron 或 n8n 呼叫，依使用者設定的提前天數與寄送時間寄出 Gmail 提醒。
+- `vercel.json` 新增每小時提醒檢查 cron 設定。
+- 新增 `docs/GOOGLE_LOGIN_AND_REMINDERS_SETUP.md`，整理 Google 登入、Gmail API、Supabase schema、Vercel env 與排程測試流程。
+
+### Changed
+
+- `/account` 文案更新為正式登入入口，並改用北大正式系所清單，不再使用「金融系」等舊示範簡稱。
+- 提醒設定文案改為測試信通過後由排程寄出，並說明寄送紀錄用於避免重複提醒。
+- `docs/SUPABASE_REMINDERS_SCHEMA.sql` 補上 `pgcrypto` extension，支援 `notification_logs.id` 的 UUID 預設值。
+- Supabase 資料映射不再把 `source_url` fallback 成 `officialUrl`；沒有真正官方簡章 URL 時，詳情頁會顯示待補狀態。
+- `.env.local.example` 補上 `SUPABASE_SERVICE_ROLE_KEY` 與 `CRON_SECRET`。
+
+### Notes
+
+- 正式提醒只寄給已登入、已開啟提醒、Email 測試通過的使用者。
+- Gmail refresh token 與 Supabase service role key 只能放在 server-side env，不能暴露到瀏覽器。
+
 ## C0 crawler import - 2026-06-29
 
 ### Added

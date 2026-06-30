@@ -87,14 +87,14 @@ export function ReminderControl({ opportunityId }: { opportunityId: string }) {
       return;
     }
 
-    setStatus(result === "saved" ? "提醒設定已儲存。這一版尚未實際寄信。" : "提醒設定儲存失敗，請確認 schema 與 RLS。");
+    setStatus(result === "saved" ? "提醒設定已儲存。系統會依排程檢查是否需要寄信。" : "提醒設定儲存失敗，請確認 schema 與 RLS。");
   }
 
   return (
     <section className="section-card space-y-4">
       <div>
         <h2 className="text-lg font-semibold">提醒設定</h2>
-        <p className="mt-1 text-sm leading-6 text-[var(--muted)]">先設定你想多早知道，不會催你交件。這裡尚未實際寄送 Email。</p>
+        <p className="mt-1 text-sm leading-6 text-[var(--muted)]">先設定你想多早知道，不會催你交件。測試信通過後，正式提醒會依排程寄出。</p>
       </div>
 
       {!signedIn ? (
@@ -147,7 +147,7 @@ export function ReminderControl({ opportunityId }: { opportunityId: string }) {
           </div>
 
           <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-3 text-sm leading-6 text-[var(--muted)]">
-            之後接 Gmail 寄信前，會先提供測試信。測試通過後才會把 Email 標記為已驗證。
+            系統只會寄你設定的提前天數提醒。已成功寄出的同一筆提醒會寫入紀錄，避免重複寄送。
           </div>
 
           <button

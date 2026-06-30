@@ -7,7 +7,7 @@ create table if not exists public.profiles (
   email text,
   display_name text,
   school text not null default '國立臺北大學',
-  major_department text not null default '金融系',
+  major_department text not null default '金融與合作經營學系',
   grade text not null default '大三',
   double_major_department text,
   minor_department text,
@@ -18,7 +18,7 @@ create table if not exists public.profiles (
 alter table public.profiles add column if not exists email text;
 alter table public.profiles add column if not exists display_name text;
 alter table public.profiles add column if not exists school text not null default '國立臺北大學';
-alter table public.profiles add column if not exists major_department text not null default '金融系';
+alter table public.profiles add column if not exists major_department text not null default '金融與合作經營學系';
 alter table public.profiles add column if not exists grade text not null default '大三';
 alter table public.profiles add column if not exists double_major_department text;
 alter table public.profiles add column if not exists minor_department text;

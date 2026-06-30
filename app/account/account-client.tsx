@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
+import { getDepartmentsForSchool } from "@/src/data/departmentCatalog";
 import { getPreferences, savePreferences } from "@/src/lib/localStorage";
 import { getSupabaseAuthClient, hasSupabaseAuthConfig } from "@/src/lib/supabase/auth-client";
 import type { UserProfile } from "@/src/types";
@@ -12,8 +13,7 @@ type ProfileRow = UserProfile & {
   display_name: string | null;
 };
 
-const schools = ["國立臺北大學", "國立臺北科技大學", "臺北醫學大學", "國立臺灣海洋大學"];
-const departments = ["金融系", "法律系", "企業管理學系", "資訊工程學系", "公共行政暨政策學系"];
+const schools = ["國立臺北大學"];
 const grades = ["大一", "大二", "大三", "大四", "碩一", "碩二"];
 
 function profileFromLocal(user: User): ProfileRow {
@@ -170,10 +170,9 @@ export function AccountClient() {
   return (
     <main className="mx-auto max-w-[760px] px-4 py-5">
       <div className="mb-5">
-        <p className="text-sm font-semibold text-[var(--action)]">v0.5-D</p>
         <h1 className="mt-1 text-2xl font-semibold">帳號與基本資格</h1>
         <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-          這一版處理 Google 登入、profile 與基本資格同步。提醒與 Email 還不會同步到雲端。
+          登入後可以同步基本資格、收藏與提醒設定。未登入仍可瀏覽機會。
         </p>
       </div>
 
@@ -208,21 +207,21 @@ export function AccountClient() {
           <SelectField
             label="主修系所"
             value={profile.majorDepartment}
-            options={departments}
+            options={getDepartmentsForSchool(profile.school)}
             onChange={(value) => updateProfile("majorDepartment", value)}
           />
           <SelectField label="年級" value={profile.grade} options={grades} onChange={(value) => updateProfile("grade", value)} />
           <SelectField
             label="雙主修"
             value={profile.doubleMajorDepartment ?? ""}
-            options={["", ...departments]}
+            options={["", ...getDepartmentsForSchool(profile.school)]}
             emptyLabel="沒有或暫不填"
             onChange={(value) => updateProfile("doubleMajorDepartment", value)}
           />
           <SelectField
             label="輔系"
             value={profile.minorDepartment ?? ""}
-            options={["", ...departments]}
+            options={["", ...getDepartmentsForSchool(profile.school)]}
             emptyLabel="沒有或暫不填"
             onChange={(value) => updateProfile("minorDepartment", value)}
           />
