@@ -36,7 +36,7 @@ create table if not exists public.competitions (
   participation_text text,
   schedule jsonb not null default '[]'::jsonb,
   judging_text text,
-  status text not null default 'draft' check (status in ('draft', 'published', 'archived')),
+  status text not null default 'draft' check (status in ('draft', 'published', 'needs_review', 'archived')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -55,6 +55,10 @@ alter table public.competitions add column if not exists first_stage_deliverable
 alter table public.competitions add column if not exists participation_text text;
 alter table public.competitions add column if not exists schedule jsonb not null default '[]'::jsonb;
 alter table public.competitions add column if not exists judging_text text;
+
+alter table public.competitions drop constraint if exists competitions_status_check;
+alter table public.competitions add constraint competitions_status_check
+check (status in ('draft', 'published', 'needs_review', 'archived'));
 
 create unique index if not exists competitions_source_item_key_idx
 on public.competitions (source_item_key)

@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## C0 title and official link patch - 2026-06-30
+
+### Changed
+
+- `scripts/crawler/export-published-sql.mjs` 新增 8 筆人工定稿覆寫：正式活動標題、主辦單位、官方活動頁、截止日、資格、獎金、交件、時程與 special notes。
+- `published-opportunities.review.sql` 會保留北大公告在 `source_url`，只把真正官方活動頁／簡章頁放入 `official_url`；短網址不再作為 official URL。
+- 「115學年度教育部獎助外國學生短期研習本土語言計畫」改為 `status = 'needs_review'`，不作為前台 published 競賽優先資料。
+- `docs/SUPABASE_SCHEMA.sql` 允許 `competitions.status = 'needs_review'`，供人工審核或非 MVP 發布資料暫存。
+
+### Notes
+
+- 本次只修競賽資料與 SQL 產生器，不新增講座／工作坊、實習／職缺、打工、海外交換到第一版核心。
+
 ## v0.9-A - 2026-06-30
 
 ### Added
