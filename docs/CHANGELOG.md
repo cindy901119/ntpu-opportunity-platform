@@ -1,5 +1,61 @@
 # CHANGELOG
 
+## v0.10-A - 2026-06-30
+
+### Planned / In Progress
+
+- 版本目標：把北大校內獎學金資料整理成可審核、可匯入 `public.competitions` 的資料列。
+- 進度：已使用校內獎學金 crawler 的 10 筆 raw announcements 作為整理來源。
+- 進度：已將北大系所／學院獎學金來源連結整理成 `scripts/crawler/scholarship-sources.json`，供後續逐頁解析與人工審核。
+- 進度：新增獎學金專用 SQL 匯出腳本，輸出 `scripts/crawler/output/scholarship-opportunities.review.sql`。
+- 進度：新增系所／學院獎學金 SQL 匯出腳本，輸出 `scripts/crawler/output/department-scholarship-opportunities.review.sql`。
+
+### Notes
+
+- 本階段只處理「獎學金」資料匯入準備，不新增登入、提醒或新機會類型。
+- 獎學金 rows 會使用 `opportunity_type = '獎學金'`；`reward_types` 維持金錢型的 `獎金`，避免和機會類型重複。
+- 校內獎學金詳情頁本身作為官方頁面，`official_url` 暫填北大校內獎學金官方詳情頁。
+- 多數目前抓到的獎學金已截止，匯入後會依現有前台規則預設隱藏，使用者切換「顯示已截止」才會看到。
+- 系所／學院獎學金本批整理 9 筆，其中 2 筆可作為 `published` 已截止資料，其餘先保留 `needs_review`。
+
+## v0.9-C - 2026-06-30
+
+### Fixed
+
+- 修正資格年級判斷：資料庫 `grade_limit` 若是「大專校院學生」「研究生」「在校學生」等描述，會依使用者年級推導為大學部／碩士班後比對，不再要求完全等於「大四」或「碩一」。
+- 修正北大金融大四未選其他偏好時，因描述型 `grade_limit` 被錯判不符而只剩少數推薦結果的問題。
+
+### Verified
+
+- 以 production published competitions 驗算：北大金融大四不會被資格錯殺；10 筆 published 中 8 筆為資格符合、2 筆為需確認。
+
+## Deploy fix - 2026-06-30
+
+### Fixed
+
+- Vercel Hobby 方案不支援每小時 Cron，原本 `0 * * * *` 會讓 production deploy 失敗。
+- `vercel.json` 改為每日 UTC 01:00（台灣時間 09:00）檢查提醒，避免阻擋 production 部署。
+- `docs/GOOGLE_LOGIN_AND_REMINDERS_SETUP.md` 補充：若要完整支援使用者自訂寄送時間，需由 n8n 或升級 Vercel Cron 頻率處理。
+
+## C0 scholarship crawler - 2026-06-30
+
+### Added
+
+- 新增 `scripts/crawler/crawl-scholarships.mjs`，專門解析北大校內獎學金頁 `class_id=4`。
+- `package.json` 新增 `npm run crawl:scholarships`。
+- crawler console 新增「抓校內獎學金」按鈕，可從本機控制台觸發專用 crawler。
+
+### Verified
+
+- `npm run crawl:scholarships -- --max-items=30` 成功抓到 10 筆校內獎學金 raw announcements。
+- `npm run crawl:export-raw-sql` 成功產出 10 筆 `raw_announcements` upsert SQL 草稿。
+- 本輪 output 不包含「獲獎人學號」標籤，也未檢出疑似 9 碼學號。
+
+### Notes
+
+- 獎學金詳情頁可能包含獲獎學生學號；crawler 會在寫入 raw text 前移除該列。
+- 本次沒有寫入 Supabase，沒有呼叫 Gemini，沒有寫入 `competitions(status = published)`，也沒有改主 WebApp 前端流程。
+
 ## v0.9-B - 2026-06-30
 
 ### Changed

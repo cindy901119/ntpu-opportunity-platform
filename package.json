@@ -9,10 +9,13 @@
     "lint": "eslint",
     "crawl:source": "node scripts/crawler/crawl-source.mjs",
     "crawl:c0": "node scripts/crawler/crawl-source.mjs",
+    "crawl:scholarships": "node scripts/crawler/crawl-scholarships.mjs",
     "crawl:manual-urls": "node scripts/crawler/crawl-source.mjs --manual-urls=scripts/crawler/manual-urls.txt --match=all-news",
     "crawl:ui": "node scripts/crawler/crawler-ui.mjs",
     "crawl:export-raw-sql": "node scripts/crawler/export-raw-sql.mjs",
-    "crawl:export-published-sql": "node scripts/crawler/export-published-sql.mjs"
+    "crawl:export-published-sql": "node scripts/crawler/export-published-sql.mjs",
+    "crawl:export-scholarships-sql": "node scripts/crawler/export-scholarships-sql.mjs",
+    "crawl:export-department-scholarships-sql": "node scripts/crawler/export-department-scholarships-sql.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.84.0",

@@ -169,6 +169,44 @@ npm run crawl:c0
 - 資格、獎勵、最高獎金必須以官方公告或簡章為準。
 - 錯誤、低信心或不屬於第一版核心的公告不得發布。
 
+## v0.10-A / C0 Scholarship Import Prep
+
+目標：先把北大校內獎學金頁整理成可人工檢查、可貼進 Supabase 的 `competitions` SQL 草稿。
+
+已新增：
+
+- `scripts/crawler/crawl-scholarships.mjs`：抓取北大校內獎學金頁，並在 raw text 寫入前移除「獲獎人學號」列。
+- `scripts/crawler/scholarship-sources.json`：整理北大系所／學院獎學金來源、狀態提示與排除規則。
+- `scripts/crawler/export-scholarships-sql.mjs`：將獎學金 raw announcements 轉成 `public.competitions` 匯入草稿。
+- `scripts/crawler/export-department-scholarships-sql.mjs`：將已人工確認的系所／學院獎學金整理成 `public.competitions` 匯入草稿。
+- `scripts/crawler/output/scholarship-opportunities.review.sql`
+- `scripts/crawler/output/department-scholarship-opportunities.review.sql`
+
+流程：
+
+```text
+npm run crawl:scholarships
+→ sample-announcements.json
+→ npm run crawl:export-scholarships-sql
+→ scholarship-opportunities.review.sql
+→ 人工檢查後貼到 Supabase SQL Editor
+
+scripts/crawler/scholarship-sources.json
+→ npm run crawl:export-department-scholarships-sql
+→ department-scholarship-opportunities.review.sql
+→ 人工檢查後貼到 Supabase SQL Editor
+```
+
+規則：
+
+- 獎學金 row 使用 `opportunity_type = '獎學金'`。
+- `reward_types` 保持為金錢型的 `獎金`，避免與機會類型重複。
+- 校內獎學金詳情頁暫視為官方頁面，寫入 `official_url`。
+- 目前抓到的多數獎學金已截止，匯入後由前台已截止切換控制顯示。
+- 涉及海外交換／國際交流的獎學金先不放入 published 草稿，需人工確認是否作為例外。
+- 系所／學院來源若只是總頁或需解析 PDF/Word，狀態不得直接設為 `published`。
+- 系所／學院獎學金若只有常態辦法、總頁或缺當期截止日，先用 `needs_review`，不直接出現在前台。
+
 ## 2026-06-29 crawler trial
 
 本輪修正北大公告列表解析：
@@ -223,6 +261,32 @@ MVP 階段 n8n 應由人工打開 workflow：
 - 人工審核 draft 後才匯入 `competitions(status = published)`。
 
 詳細節點設計見 `docs/C0_N8N_RAW_TO_DRAFT.md`。
+
+## C0 scholarship source trial
+
+新增北大校內獎學金專用 crawler：
+
+- 來源：`https://webap.ntpu.edu.tw/scholarship/scholarship.php?class_id=4`
+- 指令：`npm run crawl:scholarships -- --max-items=30`
+- 控制台：`npm run crawl:ui` 後可按「抓校內獎學金」。
+- 輸出仍沿用 `scripts/crawler/output/sample-announcements.json`、`crawler-report.json`、`raw-announcements.sql`。
+
+抓取結果：
+
+- 該頁目前可解析 10 筆校內獎學金。
+- `sample-announcements.json` 產出 10 筆。
+- `raw-announcements.sql` 產出 10 筆 raw upsert SQL 草稿。
+
+隱私處理：
+
+- 詳情頁可能出現「獲獎人學號」。
+- `crawl-scholarships.mjs` 在產生 `rawText` 前會移除「獲獎人學號」整列。
+- 本輪檢查 `sample-announcements.json` 未包含「獲獎人學號」標籤，也未檢出疑似 9 碼學號。
+
+注意：
+
+- 獎學金頁多數截止日可能已過，仍可進 raw/staging；是否發布由人工審核決定。
+- 不從 raw 直接發布到 `competitions(status = published)`。
 
 ## C0 Gmail announcement digest source
 

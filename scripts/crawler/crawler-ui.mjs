@@ -194,6 +194,27 @@ async function handleExportSql(response) {
   }
 }
 
+async function handleScholarships(request, response) {
+  if (running) {
+    sendJson(response, 409, { error: "Crawler is already running." });
+    return;
+  }
+
+  const body = await readBody(request);
+  const maxItems = Math.max(1, Math.min(100, Number(body.maxItems ?? 30)));
+  running = true;
+  lastLog = `Running scholarship crawler with maxItems=${maxItems}...\n`;
+
+  try {
+    const log = await runNode(["scripts/crawler/crawl-scholarships.mjs", `--max-items=${maxItems}`]);
+    sendJson(response, 200, { ok: true, log, state: await getState() });
+  } catch (error) {
+    sendJson(response, 500, { error: String(error.message ?? error), state: await getState() });
+  } finally {
+    running = false;
+  }
+}
+
 function pageHtml() {
   return `<!doctype html>
 <html lang="zh-Hant">
@@ -361,6 +382,7 @@ function pageHtml() {
         </select>
       </label>
       <button class="primary" id="runBtn">執行抓取</button>
+      <button id="scholarshipBtn">抓校內獎學金</button>
       <button id="sqlBtn">產生 raw SQL</button>
       <div class="status" id="status">Ready</div>
     </div>
@@ -406,6 +428,7 @@ function pageHtml() {
   <script>
     const statusEl = document.getElementById("status");
     const runBtn = document.getElementById("runBtn");
+    const scholarshipBtn = document.getElementById("scholarshipBtn");
     const sqlBtn = document.getElementById("sqlBtn");
     const maxItems = document.getElementById("maxItems");
     const maxPages = document.getElementById("maxPages");
@@ -417,6 +440,7 @@ function pageHtml() {
 
     function setBusy(value) {
       runBtn.disabled = value;
+      scholarshipBtn.disabled = value;
       sqlBtn.disabled = value;
       statusEl.textContent = value ? "Running..." : "Ready";
     }
@@ -471,6 +495,9 @@ function pageHtml() {
       maxPages: Number(maxPages.value || 3),
       matchMode: matchMode.value,
     }));
+    scholarshipBtn.addEventListener("click", () => postJson("/api/scholarships", {
+      maxItems: Number(maxItems.value || 30),
+    }));
     sqlBtn.addEventListener("click", () => postJson("/api/export-sql"));
     document.getElementById("addSourceBtn").addEventListener("click", () => postJson("/api/sources", {
       sourceKey: document.getElementById("sourceKey").value,
@@ -506,6 +533,11 @@ const server = createServer(async (request, response) => {
 
     if (request.method === "POST" && request.url === "/api/export-sql") {
       await handleExportSql(response);
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/scholarships") {
+      await handleScholarships(request, response);
       return;
     }
 

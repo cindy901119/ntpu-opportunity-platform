@@ -1,23 +1,19 @@
 {
-  "fetchedAt": "2026-06-29T07:30:55.141Z",
+  "fetchedAt": "2026-06-30T04:00:45.919Z",
   "options": {
-    "maxItems": null,
-    "maxPages": null,
-    "matchMode": "all-news",
-    "manualUrlsPath": "scripts/crawler/manual-urls.txt"
+    "maxItems": 30
   },
   "sources": [
     {
-      "sourceKey": "manual_ntpu_bulletin_urls",
-      "sourceName": "人工篩選北大公告 URL",
-      "listUrl": "scripts/crawler/manual-urls.txt",
-      "pageSource": "manual_url_list",
-      "maxPages": 1,
-      "scannedItems": 8,
-      "matchedItems": 8,
-      "fetchedItems": 8,
+      "sourceKey": "ntpu_scholarship_internal",
+      "sourceName": "國立臺北大學校內獎學金",
+      "listUrl": "https://webap.ntpu.edu.tw/scholarship/scholarship.php?class_id=4",
+      "scannedItems": 10,
+      "matchedItems": 10,
+      "fetchedItems": 10,
       "duplicateUrls": 0,
-      "failedItems": []
+      "failedItems": [],
+      "notes": "Detail parser removes the awarded-student-id row before writing rawText."
     }
   ]
 }

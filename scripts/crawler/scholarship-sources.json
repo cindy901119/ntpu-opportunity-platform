@@ -1,0 +1,212 @@
+{
+  "updatedAt": "2026-06-30",
+  "sourceNote": "Prepared from ntpu_scholarship_source_links_for_codex_2026-06-30.txt. Do not import emergency aid as opportunity cards.",
+  "rules": [
+    "source_url should point to the closest department or college official page.",
+    "official_url should point to the single scholarship page when available; otherwise use the scholarship index page.",
+    "If source_url is an index page, keep status as draft, needs_review, or needs_pdf_parse.",
+    "Do not create opportunity cards for 急難救助, 急難扶助, or 慰助金.",
+    "Do not infer department_limit or college_limit only from the website location.",
+    "Keep the formal scholarship title; do not add 公告, 辦理, or 相關訊息."
+  ],
+  "sources": [
+    {
+      "unit": "中文系",
+      "title": "學生法規 / 獎學金辦法總頁",
+      "url": "https://www.cl.ntpu.edu.tw/rules/",
+      "statusHint": "needs_pdf_parse",
+      "notes": "Lists scholarship and emergency-aid rules. Exclude emergency aid parts."
+    },
+    {
+      "unit": "歷史系",
+      "title": "獎助學金總頁",
+      "url": "https://history.ntpu.edu.tw/?page_id=2298",
+      "statusHint": "ready_to_import_or_needs_pdf_parse",
+      "notes": "Lists 陳劉月英女士紀念清寒助學金 and 馮志強先生清寒助學金 with quota and amount."
+    },
+    {
+      "unit": "歷史系",
+      "title": "114.1陳劉月英女士紀念清寒助學金公告",
+      "url": "https://history.ntpu.edu.tw/?p=10007",
+      "statusHint": "ready_to_import",
+      "notes": "Recent announcement example. Prefer the index page for standing scholarship rules."
+    },
+    {
+      "unit": "會計系",
+      "title": "本系獎助學金資訊總頁",
+      "url": "https://www.acc.ntpu.edu.tw/page.php?id=136&ids=2",
+      "statusHint": "ready_to_import_or_needs_pdf_parse",
+      "notes": "Lists accounting scholarships and attachments. Exclude emergency aid."
+    },
+    {
+      "unit": "企管系",
+      "title": "獎學金公告／介紹頁",
+      "url": "https://www.dba.ntpu.edu.tw/page.php?id=236&ids=2",
+      "statusHint": "ready_to_import_or_needs_review",
+      "notes": "Includes department scholarships, international exchange scholarship, and graduate assistantship items. Review yearly scope."
+    },
+    {
+      "unit": "金融與合作經營學系",
+      "title": "獎助學金含辦法與表單",
+      "url": "https://coop.ntpu.edu.tw/page.php?id=141&ids=2",
+      "statusHint": "needs_review",
+      "notes": "Includes finance/cooperation scholarships and annual announcements. Exclude emergency-aid scholarship."
+    },
+    {
+      "unit": "統計系",
+      "title": "G-Top / 清寒獎學金頁",
+      "url": "https://www.stat.ntpu.edu.tw/page.php?id=147&ids=1",
+      "statusHint": "ready_to_import",
+      "notes": "Can confirm target, yearly early-March timing, at most one recipient, and amount 50,000."
+    },
+    {
+      "unit": "公行系",
+      "title": "英荃獎學金公告",
+      "url": "https://pa.ntpu.edu.tw/news_detail?id=40",
+      "statusHint": "ready_to_import_yearly",
+      "notes": "Lists quota, amount, eligibility, and application deadline. Confirm whether it is annual before creating a standing item."
+    },
+    {
+      "unit": "經濟系",
+      "title": "一貫修讀學、碩士學位獎學金辦法頁",
+      "url": "https://econ.ntpu.edu.tw/p/404-1001-367.php?Lang=zh-tw",
+      "statusHint": "ready_to_import_or_needs_pdf_parse",
+      "notes": "PDF confirms amount around 50,000 per person."
+    },
+    {
+      "unit": "經濟系",
+      "title": "相關辦法總頁",
+      "url": "https://econ.ntpu.edu.tw/p/412-1001-125.php?Lang=zh-tw",
+      "statusHint": "source_only",
+      "notes": "Use only as an entry point for economics rules. Do not create a card from this page alone."
+    },
+    {
+      "unit": "社會系",
+      "title": "大學部獎助學金專區",
+      "url": "https://sociology.ntpu.edu.tw/data/25?cate=109",
+      "statusHint": "ready_to_import_exclude_emergency",
+      "notes": "Contains alumni, 張鏡予, 黃樹仁, academic participation, and hardship scholarships. Exclude emergency aid."
+    },
+    {
+      "unit": "社會系",
+      "title": "碩士班獎助學金專區",
+      "url": "https://sociology.ntpu.edu.tw/data/29?cate=126",
+      "statusHint": "ready_to_import_exclude_emergency",
+      "notes": "Can confirm graduate entrance, five-year pathway, and graduate assistantship items."
+    },
+    {
+      "unit": "社會系",
+      "title": "114學年第2學期各類獎助學金申請公告",
+      "url": "https://sociology.ntpu.edu.tw/news/0QQgsLHwMw6C",
+      "statusHint": "yearly_exclude_emergency",
+      "notes": "Lists sociology hardship scholarship, academic research participation award, alumni and 張鏡予 scholarships. Exclude emergency aid."
+    },
+    {
+      "unit": "法律學院",
+      "title": "獎助學金總頁",
+      "url": "https://www.law.ntpu.edu.tw/data/22",
+      "statusHint": "source_only",
+      "notes": "Scholarship list entrance. Fetch single announcements instead of importing the entire page."
+    },
+    {
+      "unit": "法律學系",
+      "title": "助學圓夢清寒優秀學生獎學金",
+      "url": "https://www.law.ntpu.edu.tw/data/22/1106",
+      "statusHint": "ready_to_import",
+      "notes": "Can confirm eligibility, documents, amount range, and quota."
+    },
+    {
+      "unit": "法律學院",
+      "title": "金華優秀清寒人才獎學金",
+      "url": "https://www.law.ntpu.edu.tw/data/22/1107",
+      "statusHint": "ready_to_import",
+      "notes": "Can confirm period, eligibility, and origin. Check attachment for amount/quota."
+    },
+    {
+      "unit": "法律學院",
+      "title": "連玉獎學金",
+      "url": "https://www.law.ntpu.edu.tw/data/22/1109",
+      "statusHint": "ready_to_import",
+      "notes": "Can confirm 6 recipients per academic year and 20,000 per recipient."
+    },
+    {
+      "unit": "法律學院",
+      "title": "啓一獎勵優秀人才獎學金",
+      "url": "https://www.law.ntpu.edu.tw/data/22/1016",
+      "statusHint": "ready_to_import_yearly",
+      "notes": "Can confirm 6 recipients per academic year. Confirm current application period before publishing."
+    },
+    {
+      "unit": "法律學系",
+      "title": "碩博士班專題論文獎學金",
+      "url": "https://www.law.ntpu.edu.tw/data/22/963",
+      "statusHint": "ready_to_import",
+      "notes": "Can confirm semester-based opening and application requirements."
+    },
+    {
+      "unit": "法律學院",
+      "title": "高有財紀念獎學金",
+      "url": "https://www.law.ntpu.edu.tw/data/22/1116",
+      "statusHint": "ready_to_import_yearly",
+      "notes": "Use as yearly announcement. Confirm current deadline before publishing."
+    },
+    {
+      "unit": "自然資源與環境管理研究所",
+      "title": "碩博生獎助學金及工讀機會",
+      "url": "https://inrm.ntpu.edu.tw/?page_id=402",
+      "statusHint": "needs_review",
+      "notes": "May be closer to graduate aid and work-study. Confirm it fits MVP before publishing."
+    },
+    {
+      "unit": "資工系",
+      "title": "獎助學金總頁",
+      "url": "https://www.csie.ntpu.edu.tw/pages_detail/469",
+      "statusHint": "needs_pdf_parse",
+      "notes": "Lists 音律電子, CPE, competition award, 優學獎, and graduate scholarships. Split each rule."
+    },
+    {
+      "unit": "資工系",
+      "title": "獎助學金入口頁",
+      "url": "https://www.csie.ntpu.edu.tw/pages/27",
+      "statusHint": "source_only",
+      "notes": "Entry page only. Do not create an opportunity card directly."
+    },
+    {
+      "unit": "資工系",
+      "title": "音律電子清寒暨優秀獎學金歷史公告",
+      "url": "https://www.csie.ntpu.edu.tw/pages_detail/1791",
+      "statusHint": "source_only",
+      "notes": "Old yearly announcement; use only as supporting evidence, not a standing card."
+    },
+    {
+      "unit": "通訊系",
+      "title": "獎學金頁",
+      "url": "https://www.ce.ntpu.edu.tw/mods/basic/content_left.php?left=5",
+      "statusHint": "needs_pdf_parse",
+      "notes": "Lists 音律電子清寒暨優秀獎學金 rules. Split the rule before importing."
+    },
+    {
+      "unit": "通訊系",
+      "title": "系辦公告列表",
+      "url": "https://www.ce.ntpu.edu.tw/mods/basic/news.php?news=1",
+      "statusHint": "source_only",
+      "notes": "Can fetch recent scholarship announcements. Do not import awardee lists."
+    }
+  ],
+  "deferredSources": [
+    {
+      "unit": "應外系",
+      "title": "獎學金資訊頁",
+      "url": "https://www.dafl.ntpu.edu.tw/page.php?id=110&ids=1",
+      "statusHint": "source_only",
+      "notes": "Looks like general internal/external scholarship information, not department-only scholarships."
+    },
+    {
+      "unit": "休運系",
+      "title": "獎學金頁",
+      "url": "https://lsm.ntpu.edu.tw/page.php?id=2&ids=1",
+      "statusHint": "source_only_or_needs_review",
+      "notes": "Mostly school-level, external, or old-year items. Do not automatically mark as department-limited."
+    }
+  ]
+}
