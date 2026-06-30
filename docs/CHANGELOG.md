@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v0.10-B - 2026-06-30
+
+### Fixed
+
+- Navbar 接回 `AuthStatus`，前台會顯示「登入／帳號」入口。
+- `/auth/callback` 若回跳時已經有 session 但沒有 `code`，會直接回到 `/account`，避免卡在登入確認頁。
+
 ## v0.10-A - 2026-06-30
 
 ### Planned / In Progress

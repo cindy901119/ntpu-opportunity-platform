@@ -25,13 +25,20 @@ function AuthCallbackHandler() {
       }
 
       const code = searchParams.get("code");
+      const supabase = getSupabaseAuthClient();
 
       if (!code) {
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          router.replace("/account");
+          return;
+        }
+
         setMessage("沒有收到登入授權碼，請回帳號頁重新登入。");
         return;
       }
 
-      const { error } = await getSupabaseAuthClient().auth.exchangeCodeForSession(code);
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
 
       if (error) {
         setMessage("登入回傳處理失敗，請稍後再試。");

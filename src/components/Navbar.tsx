@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AuthStatus } from "./AuthStatus";
 
 const items = [
   { href: "/opportunities", label: "機會" },
@@ -33,6 +34,7 @@ export function Navbar() {
               </Link>
             );
           })}
+          <AuthStatus />
         </div>
       </div>
     </nav>
