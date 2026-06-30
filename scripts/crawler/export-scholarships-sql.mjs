@@ -118,13 +118,17 @@ function extractDeadline(rawText) {
 
 function extractAmount(rawText) {
   const value = extractField(rawText, "金 額");
-  if (!value) return { prizeText: "獎學金金額依官方頁面與附件為準。", maxPrizeAmount: null };
+  if (!value) return { prizeText: "獎金待確認", maxPrizeAmount: null, amountDetail: "" };
   const numbers = [...value.matchAll(/([0-9,]+)\s*(萬)?\s*(?:元)?/g)].map((match) => {
     const base = Number.parseInt(match[1].replace(/,/g, ""), 10);
     return match[2] ? base * 10000 : base;
   });
   const maxPrizeAmount = numbers.length ? Math.max(...numbers) : null;
-  return { prizeText: `獎學金 ${value}`, maxPrizeAmount };
+  return {
+    prizeText: maxPrizeAmount ? `最高 ${maxPrizeAmount.toLocaleString("zh-TW")} 元` : "獎金待確認",
+    maxPrizeAmount,
+    amountDetail: value,
+  };
 }
 
 function inferGradeLimit(text) {
@@ -214,6 +218,7 @@ function buildOpportunity(announcement) {
     summary,
     special_notes: [
       isExpired ? "此獎學金已截止，保留作為資料展示與流程測試。" : null,
+      amount.amountDetail ? `金額細節：${amount.amountDetail}` : null,
       applyMethod ? `申請方式：${applyMethod}` : null,
       "附件與完整規則請以官方獎學金頁面為準。",
     ].filter(Boolean),

@@ -80,7 +80,7 @@ const MANUAL_OVERRIDES = [
     grade_limit: "大專校院學生、研究生",
     eligibility_text:
       "每隊2至5人，大專校院學生含研究生；隊伍代表人須為臺北聯合大學系統四校學生，其餘成員可為其他大專校院學生。",
-    prize_text: "金牌最高獎金30,000元；前20組完成報名且通過資格審查者，每隊另有1,000元獎勵金。",
+    prize_text: "最高 30,000 元",
     reward_types: ["獎金"],
     max_prize_amount: 30000,
     submission_types: ["提案計畫書", "參賽聲明書", "在學證明"],
@@ -91,6 +91,7 @@ const MANUAL_OVERRIDES = [
       "原 title 是促銷式公告標題，已改為正式活動名。",
       "official_url 已補臺北聯合大學系統官方公告頁。",
       "原 submission_types 含影片錯誤，已改為提案計畫書、參賽聲明書與在學證明。",
+      "前20組完成報名且通過資格審查者，每隊另有1,000元獎勵金，依官方簡章為準。",
     ],
   },
   {
@@ -138,7 +139,7 @@ const MANUAL_OVERRIDES = [
     school_limit: "不限，限國內學校相關身分",
     department_limit: "不限",
     grade_limit: "高中職、大專校院、研究生、近年碩博士畢業生",
-    prize_text: "研究論文組第一名50,000元；另有其他名次與小論文組獎項，依官方簡章為準。",
+    prize_text: "最高 50,000 元",
     reward_types: ["獎金", "獎狀"],
     max_prize_amount: 50000,
     schedule: [
@@ -151,6 +152,7 @@ const MANUAL_OVERRIDES = [
       "原 title 是轉知公告句，已清理成活動正式名稱。",
       "原 official_url 是短網址，已改國家公園署主題網官方頁。",
       "原 deadline 為 null 錯誤，已補投稿截止日。",
+      "另有其他名次與小論文組獎項，依官方簡章為準。",
     ],
   },
   {
@@ -169,7 +171,7 @@ const MANUAL_OVERRIDES = [
     school_limit: "不限學校，但須為在校學生",
     department_limit: "不限",
     grade_limit: "在校學生",
-    prize_text: "單場獎第一名每隊5,000元；單場人氣獎每隊2,500元；另有年度個人獎與年度團隊獎。",
+    prize_text: "最高 5,000 元",
     reward_types: ["獎金"],
     max_prize_amount: 5000,
     schedule: [],
@@ -178,6 +180,7 @@ const MANUAL_OVERRIDES = [
       "原 title 含 emoji 裝飾，已清理。",
       "此活動依多個主題分期執行，不硬填單一 deadline。",
       "原 official_url 是短網址，已展開為北大教務處官方頁。",
+      "另有單場人氣獎、年度個人獎與年度團隊獎，依官方簡章為準。",
     ],
   },
   {
@@ -196,7 +199,7 @@ const MANUAL_OVERRIDES = [
     school_limit: "不限",
     department_limit: "不限",
     grade_limit: "國中、高中職、大專院校、碩博士",
-    prize_text: "各組第一名10,000元、第二名6,000元、第三名4,000元，另有獎狀。",
+    prize_text: "最高 10,000 元",
     reward_types: ["獎金", "獎狀"],
     max_prize_amount: 10000,
     schedule: [
@@ -210,6 +213,7 @@ const MANUAL_OVERRIDES = [
       "原 title 含主辦單位與「辦理」，已清理。",
       "official_url 已補中鼎教育基金會官方活動頁。",
       "不建議放科技／程式，已改為設計／創作與社會／永續。",
+      "另有第二名、第三名與獎狀，依官方簡章為準。",
     ],
   },
   {
@@ -230,7 +234,7 @@ const MANUAL_OVERRIDES = [
     school_limit: "不限",
     department_limit: "不限",
     grade_limit: "中小學、高中、大專、社會人士、AI組、專業組",
-    prize_text: "總獎金70萬元；專業組金獎最高85,000元。",
+    prize_text: "最高 85,000 元",
     reward_types: ["獎金"],
     max_prize_amount: 85000,
     schedule: [
@@ -261,7 +265,7 @@ const MANUAL_OVERRIDES = [
     school_limit: "由開設本土語言課程之大學校院提報申請",
     department_limit: "不限",
     grade_limit: "外國學生、外國學位生、交換生、選讀生",
-    prize_text: "外國學生來臺研習本土語言獎學金每月28,000元，至多6個月；已在臺外國學生修課獎助金每學期10,000元，至多2學期。",
+    prize_text: "最高每月 28,000 元",
     reward_types: ["獎學金", "獎助金"],
     max_prize_amount: null,
     status: "needs_review",
