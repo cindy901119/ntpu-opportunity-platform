@@ -130,6 +130,25 @@ function matchesAllowedDepartment(departmentName: string, allowedDepartments: st
   return allowedDepartments.some((allowedDepartment) => departmentName === allowedDepartment || departmentName.startsWith(allowedDepartment));
 }
 
+function isGradeMatched(profileGrade: string, allowedGrades: string[]) {
+  if (!allowedGrades.length || allowedGrades.includes(profileGrade)) {
+    return true;
+  }
+
+  const studyLevel = inferStudyLevel(profileGrade);
+  const text = allowedGrades.join(" ");
+
+  if (studyLevel === "大學部" && /大專|大學|大專校院|在校學生|學生/.test(text)) {
+    return true;
+  }
+
+  if (studyLevel === "碩士班" && /大專|大學|大專校院|研究生|碩士|碩博士|在校學生|學生/.test(text)) {
+    return true;
+  }
+
+  return false;
+}
+
 export function isQualificationMatched(opportunity: Opportunity, profile: UserProfile) {
   const rules = opportunity.eligibilityRules;
 
@@ -137,7 +156,7 @@ export function isQualificationMatched(opportunity: Opportunity, profile: UserPr
     return "uncertain" as const;
   }
 
-  if (rules.allowedGrades?.length && !rules.allowedGrades.includes(profile.grade)) {
+  if (rules.allowedGrades?.length && !isGradeMatched(profile.grade, rules.allowedGrades)) {
     return "mismatch" as const;
   }
 
@@ -180,7 +199,7 @@ export function getQualificationReasons(opportunity: Opportunity, profile: UserP
     reasons.push("不限身分");
   }
 
-  if (rules.allowedGrades?.includes(profile.grade)) {
+  if (rules.allowedGrades?.length && isGradeMatched(profile.grade, rules.allowedGrades)) {
     reasons.push(`${profile.grade}學生可參加`);
   }
 
