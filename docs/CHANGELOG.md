@@ -6,6 +6,8 @@
 
 - Navbar 接回 `AuthStatus`，前台會顯示「登入／帳號」入口。
 - `/auth/callback` 若回跳時已經有 session 但沒有 `code`，會直接回到 `/account`，避免卡在登入確認頁。
+- 新增 `docs/SUPABASE_PROFILE_FIX.sql`，用於修補 Google 登入後讀寫 `profiles` 失敗的 schema / RLS / grant 設定。
+- `/account` 會顯示 Supabase profile 讀寫失敗的實際錯誤訊息，方便定位設定問題。
 
 ## v0.10-A - 2026-06-30
 

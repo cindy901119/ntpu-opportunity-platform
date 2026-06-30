@@ -112,7 +112,7 @@ export function AccountClient() {
       }
 
       if (error) {
-        setStatus("尚未讀到 profile，請確認是否已執行 v0.5-A schema。");
+        setStatus(`尚未讀到 profile：${error.message}`);
       }
 
       setProfile(profileFromLocal(data.user));
@@ -159,7 +159,7 @@ export function AccountClient() {
       });
     }
 
-    setStatus(error ? "儲存失敗，請確認 profiles schema 與 RLS policy。" : "profile 已儲存。");
+    setStatus(error ? `儲存失敗：${error.message}` : "profile 已儲存。");
   }
 
   function updateProfile(key: keyof UserProfile, value: string) {
