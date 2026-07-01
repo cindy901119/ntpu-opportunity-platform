@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { getDepartmentsForSchool } from "@/src/data/departmentCatalog";
@@ -15,6 +16,7 @@ type ProfileRow = UserProfile & {
 
 const schools = ["國立臺北大學"];
 const grades = ["大一", "大二", "大三", "大四", "碩一", "碩二"];
+const adminEmail = "cindy901119@gmail.com";
 
 function profileFromLocal(user: User): ProfileRow {
   const local = getPreferences().profile;
@@ -167,6 +169,8 @@ export function AccountClient() {
     setProfile((current) => (current ? { ...current, [key]: value } : current));
   }
 
+  const isAdmin = user?.email?.toLowerCase() === adminEmail;
+
   return (
     <main className="mx-auto max-w-[760px] px-4 py-5">
       <div className="mb-5">
@@ -197,54 +201,79 @@ export function AccountClient() {
       ) : null}
 
       {user && profile ? (
-        <section className="section-card space-y-4">
-          <div>
-            <h2 className="text-lg font-semibold">我的 profile</h2>
-            <p className="mt-1 text-sm text-[var(--muted)]">{profile.email}</p>
-          </div>
+        <div className="space-y-4">
+          {isAdmin ? (
+            <section className="section-card space-y-3">
+              <div>
+                <h2 className="text-lg font-semibold">管理工具</h2>
+                <p className="mt-1 text-sm leading-6 text-[var(--muted)]">只有管理者帳號會看到這裡。</p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Link
+                  href="/data-staging"
+                  className="rounded-2xl bg-[var(--primary)] px-4 py-3 text-center font-semibold text-[var(--primary-ink)]"
+                >
+                  整理公告草稿
+                </Link>
+                <Link
+                  href="/data-entry"
+                  className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-4 py-3 text-center font-semibold text-[var(--action)]"
+                >
+                  編輯匯入資料
+                </Link>
+              </div>
+            </section>
+          ) : null}
 
-          <SelectField label="學校" value={profile.school} options={schools} onChange={(value) => updateProfile("school", value)} />
-          <SelectField
-            label="主修系所"
-            value={profile.majorDepartment}
-            options={getDepartmentsForSchool(profile.school)}
-            onChange={(value) => updateProfile("majorDepartment", value)}
-          />
-          <SelectField label="年級" value={profile.grade} options={grades} onChange={(value) => updateProfile("grade", value)} />
-          <SelectField
-            label="雙主修"
-            value={profile.doubleMajorDepartment ?? ""}
-            options={["", ...getDepartmentsForSchool(profile.school)]}
-            emptyLabel="沒有或暫不填"
-            onChange={(value) => updateProfile("doubleMajorDepartment", value)}
-          />
-          <SelectField
-            label="輔系"
-            value={profile.minorDepartment ?? ""}
-            options={["", ...getDepartmentsForSchool(profile.school)]}
-            emptyLabel="沒有或暫不填"
-            onChange={(value) => updateProfile("minorDepartment", value)}
-          />
+          <section className="section-card space-y-4">
+            <div>
+              <h2 className="text-lg font-semibold">我的 profile</h2>
+              <p className="mt-1 text-sm text-[var(--muted)]">{profile.email}</p>
+            </div>
 
-          <div className="grid gap-2 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={saveProfile}
-              disabled={saving}
-              className="rounded-2xl bg-[var(--action)] px-4 py-3 font-semibold text-[var(--paper)] disabled:opacity-60"
-            >
-              {saving ? "儲存中" : "儲存 profile"}
-            </button>
-            <button
-              type="button"
-              onClick={signOut}
-              className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-4 py-3 font-semibold text-[var(--muted)]"
-            >
-              登出
-            </button>
-          </div>
-          {status ? <p className="text-sm font-semibold text-[var(--action)]">{status}</p> : null}
-        </section>
+            <SelectField label="學校" value={profile.school} options={schools} onChange={(value) => updateProfile("school", value)} />
+            <SelectField
+              label="主修系所"
+              value={profile.majorDepartment}
+              options={getDepartmentsForSchool(profile.school)}
+              onChange={(value) => updateProfile("majorDepartment", value)}
+            />
+            <SelectField label="年級" value={profile.grade} options={grades} onChange={(value) => updateProfile("grade", value)} />
+            <SelectField
+              label="雙主修"
+              value={profile.doubleMajorDepartment ?? ""}
+              options={["", ...getDepartmentsForSchool(profile.school)]}
+              emptyLabel="沒有或暫不填"
+              onChange={(value) => updateProfile("doubleMajorDepartment", value)}
+            />
+            <SelectField
+              label="輔系"
+              value={profile.minorDepartment ?? ""}
+              options={["", ...getDepartmentsForSchool(profile.school)]}
+              emptyLabel="沒有或暫不填"
+              onChange={(value) => updateProfile("minorDepartment", value)}
+            />
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={saveProfile}
+                disabled={saving}
+                className="rounded-2xl bg-[var(--action)] px-4 py-3 font-semibold text-[var(--primary-ink)] disabled:opacity-60"
+              >
+                {saving ? "儲存中" : "儲存 profile"}
+              </button>
+              <button
+                type="button"
+                onClick={signOut}
+                className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-4 py-3 font-semibold text-[var(--muted)]"
+              >
+                登出
+              </button>
+            </div>
+            {status ? <p className="text-sm font-semibold text-[var(--action)]">{status}</p> : null}
+          </section>
+        </div>
       ) : null}
     </main>
   );
