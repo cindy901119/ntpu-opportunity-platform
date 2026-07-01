@@ -13,6 +13,8 @@
 - 管理者判斷改為同時檢查 Auth email 與 profile email，避免 profile 已載入但入口未顯示。
 - `/data-entry` 新增管理者直接寫入 Supabase `competitions` 的發布流程，SQL 輸出保留為備援。
 - 新增 `/api/admin/competitions`，server-side 再次檢查管理者 email，並使用 `SUPABASE_SERVICE_ROLE_KEY` 寫入資料庫。
+- `/data-entry` 新增貼上 JSON 後自動帶入表單的流程，方便先用 GPT 整理公告內容再人工確認。
+- 新增 `docs/ADMIN_IMPORT_JSON_TEMPLATE.md`，作為 GPT 整理匯入資料的固定格式。
 
 ## v0.10-C - 2026-07-01
 

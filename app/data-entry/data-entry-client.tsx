@@ -207,6 +207,7 @@ export function DataEntryClient() {
   });
   const [copied, setCopied] = useState("");
   const [publishing, setPublishing] = useState(false);
+  const [jsonInput, setJsonInput] = useState("");
 
   const jsonPreview = useMemo(() => JSON.stringify(draft, null, 2), [draft]);
   const sqlPreview = useMemo(() => buildInsertSql(draft), [draft]);
@@ -232,6 +233,30 @@ export function DataEntryClient() {
     window.localStorage.removeItem(STORAGE_KEY);
     setDraft(initialDraft);
     setCopied("已清空草稿。");
+  }
+
+  function importJson() {
+    try {
+      const parsed = JSON.parse(jsonInput) as Partial<DraftCompetition>;
+      setDraft((current) => ({
+        ...current,
+        ...parsed,
+        topic_areas: Array.isArray(parsed.topic_areas) ? parsed.topic_areas : current.topic_areas,
+        category_tags: Array.isArray(parsed.category_tags) ? parsed.category_tags : current.category_tags,
+        skill_tags: Array.isArray(parsed.skill_tags) ? parsed.skill_tags : current.skill_tags,
+        submission_types: Array.isArray(parsed.submission_types) ? parsed.submission_types : current.submission_types,
+        first_stage_deliverables: Array.isArray(parsed.first_stage_deliverables)
+          ? parsed.first_stage_deliverables
+          : current.first_stage_deliverables,
+        reward_types: Array.isArray(parsed.reward_types) ? parsed.reward_types : current.reward_types,
+        special_notes: Array.isArray(parsed.special_notes) ? parsed.special_notes : current.special_notes,
+        schedule: Array.isArray(parsed.schedule) ? parsed.schedule : current.schedule,
+        status: parsed.status === "published" ? "published" : parsed.status === "draft" ? "draft" : current.status,
+      }));
+      setCopied("已載入 JSON，請檢查表單後再發布。");
+    } catch {
+      setCopied("JSON 格式讀取失敗，請確認逗號、引號與陣列格式。");
+    }
   }
 
   async function copyText(label: string, text: string) {
@@ -288,6 +313,45 @@ export function DataEntryClient() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
+        <section className="section-card space-y-3 lg:col-span-2">
+          <div>
+            <h2 className="text-lg font-semibold">貼上 JSON</h2>
+            <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
+              可以請 GPT 依欄位整理 JSON，貼上後自動帶入表單。載入後仍建議人工檢查再發布。
+            </p>
+          </div>
+          <textarea
+            value={jsonInput}
+            onChange={(event) => setJsonInput(event.target.value)}
+            rows={8}
+            placeholder={`{
+  "title": "活動名稱",
+  "organizer": "主辦單位",
+  "source_url": "https://...",
+  "deadline": "2026-08-31",
+  "opportunity_type": "比賽",
+  "summary": "一句短摘要"
+}`}
+            className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-3 py-3 font-mono text-xs leading-5 text-[var(--text)]"
+          />
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={importJson}
+              className="rounded-xl bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-[var(--primary-ink)]"
+            >
+              載入 JSON 到表單
+            </button>
+            <button
+              type="button"
+              onClick={() => setJsonInput(jsonPreview)}
+              className="rounded-xl border border-[var(--line)] bg-[var(--paper)] px-4 py-3 text-sm font-semibold text-[var(--action)]"
+            >
+              用目前表單產生 JSON
+            </button>
+          </div>
+        </section>
+
         <section className="section-card space-y-4">
           <h2 className="text-lg font-semibold">基本資料</h2>
           <TextField label="標題" value={draft.title} onChange={(value) => update("title", value)} />
