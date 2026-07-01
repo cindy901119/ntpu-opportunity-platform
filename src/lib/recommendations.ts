@@ -149,6 +149,10 @@ function isGradeMatched(profileGrade: string, allowedGrades: string[]) {
   return false;
 }
 
+function shouldKeepUncertainOpportunity(opportunity: Opportunity) {
+  return opportunity.opportunityType === "獎學金";
+}
+
 export function isQualificationMatched(opportunity: Opportunity, profile: UserProfile) {
   const rules = opportunity.eligibilityRules;
 
@@ -368,18 +372,21 @@ export function getRecommendations(
     .filter((opportunity) => matchesFilters(opportunity, preferences))
     .map((opportunity) => {
       const qualification = isQualificationMatched(opportunity, preferences.profile);
-      if (qualification === "mismatch") {
+      const effectiveQualification =
+        qualification === "mismatch" && shouldKeepUncertainOpportunity(opportunity) ? "uncertain" : qualification;
+
+      if (effectiveQualification === "mismatch") {
         return null;
       }
 
       const internalScore = scoreOpportunity(opportunity, preferences);
       return {
         opportunity,
-        label: getLabel(internalScore, qualification, opportunity.deadline),
+        label: getLabel(internalScore, effectiveQualification, opportunity.deadline),
         matchedReasons: getMatchedReasons(opportunity, preferences),
         preferenceMatches: getPreferenceMatches(opportunity, preferences),
         qualificationReasons: getQualificationReasons(opportunity, preferences.profile),
-        warnings: getWarnings(opportunity, qualification),
+        warnings: getWarnings(opportunity, effectiveQualification),
         internalScore,
       };
     })

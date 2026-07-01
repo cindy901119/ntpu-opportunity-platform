@@ -10,6 +10,7 @@
 - 測試信 API 會回傳較明確的錯誤狀態，例如 Gmail 環境變數未設定、refresh token 授權失敗或 Gmail API 拒絕寄送。
 - 補上 `notification_logs` 的 authenticated insert RLS policy，避免測試信已寄出但寄送紀錄無法寫入。
 - 提醒 Email 改為固定使用登入帳號信箱，前台不再允許任意輸入收件地址，避免被濫用成寄信工具。
+- 調整推薦資格判斷：獎學金若資格推論不完整，不再被前端硬排除，改以「需要再確認」保留在列表中。
 
 ### Added
 
