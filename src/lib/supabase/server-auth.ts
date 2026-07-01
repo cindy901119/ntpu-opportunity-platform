@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export function getBearerToken(request: Request) {
   const authorization = request.headers.get("authorization") ?? "";
@@ -29,6 +30,23 @@ export function getSupabaseServerClient(accessToken?: string) {
   });
 }
 
+export function hasSupabaseServiceRoleConfig() {
+  return Boolean(supabaseUrl && supabaseServiceRoleKey);
+}
+
+export function getSupabaseServiceRoleClient() {
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    throw new Error("Supabase service role env is not configured.");
+  }
+
+  return createClient(supabaseUrl, supabaseServiceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+}
+
 export async function getUserFromRequest(request: Request) {
   const token = getBearerToken(request);
 
@@ -45,4 +63,3 @@ export async function getUserFromRequest(request: Request) {
 
   return { token, user: data.user };
 }
-

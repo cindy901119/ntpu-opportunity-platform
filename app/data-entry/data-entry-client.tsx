@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ChipSelector } from "@/src/components/ChipSelector";
+import { getSupabaseAuthClient } from "@/src/lib/supabase/auth-client";
 import type { OpportunityType, RewardType, TopicArea } from "@/src/types";
 
 type DraftCompetition = {
@@ -205,6 +206,7 @@ export function DataEntryClient() {
     }
   });
   const [copied, setCopied] = useState("");
+  const [publishing, setPublishing] = useState(false);
 
   const jsonPreview = useMemo(() => JSON.stringify(draft, null, 2), [draft]);
   const sqlPreview = useMemo(() => buildInsertSql(draft), [draft]);
@@ -237,13 +239,51 @@ export function DataEntryClient() {
     setCopied(`已複製${label}。`);
   }
 
+  async function publishDraft() {
+    if (missingFields.length) {
+      setCopied(`還缺：${missingFields.join("、")}`);
+      return;
+    }
+
+    setPublishing(true);
+    setCopied("正在寫入資料庫。");
+
+    const { data } = await getSupabaseAuthClient().auth.getSession();
+    const token = data.session?.access_token;
+
+    if (!token) {
+      setPublishing(false);
+      setCopied("請先用管理者帳號登入。");
+      return;
+    }
+
+    const response = await fetch("/api/admin/competitions", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(draft),
+    });
+    const result = (await response.json().catch(() => ({}))) as { error?: string; detail?: string; competition?: { title?: string; status?: string } };
+
+    setPublishing(false);
+
+    if (!response.ok) {
+      setCopied(result.detail ?? `寫入失敗：${result.error ?? "unknown_error"}`);
+      return;
+    }
+
+    setCopied(`已寫入資料庫：${result.competition?.title ?? draft.title}`);
+  }
+
   return (
     <main className="mx-auto max-w-[980px] px-4 py-5">
       <div className="mb-5">
         <p className="text-sm font-semibold text-[var(--action)]">v0.4-C</p>
         <h1 className="mt-1 text-2xl font-semibold">資料匯入工作台</h1>
         <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-          先把公告整理成符合 `competitions` 的草稿。這個頁面不會寫入資料庫，確認後再複製 SQL 到 Supabase。
+          先把公告整理成符合 `competitions` 的草稿。管理者確認後可直接寫入 Supabase，SQL 輸出只作備援。
         </p>
       </div>
 
@@ -296,6 +336,14 @@ export function DataEntryClient() {
               </div>
             )}
             <div className="grid gap-2">
+              <button
+                type="button"
+                onClick={publishDraft}
+                disabled={publishing || Boolean(missingFields.length)}
+                className="rounded-xl bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-[var(--primary-ink)] disabled:opacity-55"
+              >
+                {publishing ? "寫入中" : "直接發布到資料庫"}
+              </button>
               <button type="button" onClick={saveDraft} className="rounded-xl bg-[var(--action)] px-4 py-3 text-sm font-semibold text-[var(--paper)]">
                 儲存草稿
               </button>

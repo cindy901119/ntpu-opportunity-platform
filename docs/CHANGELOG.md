@@ -11,6 +11,8 @@
 - 調整偏好頁雙主修／輔系欄位：移除「有／沒有」文字，只保留開關；開啟後同一行顯示系所選擇。
 - 帳號頁新增管理者入口，只有 `cindy901119@gmail.com` 登入時會看到資料整理與匯入編輯連結。
 - 管理者判斷改為同時檢查 Auth email 與 profile email，避免 profile 已載入但入口未顯示。
+- `/data-entry` 新增管理者直接寫入 Supabase `competitions` 的發布流程，SQL 輸出保留為備援。
+- 新增 `/api/admin/competitions`，server-side 再次檢查管理者 email，並使用 `SUPABASE_SERVICE_ROLE_KEY` 寫入資料庫。
 
 ## v0.10-C - 2026-07-01
 
