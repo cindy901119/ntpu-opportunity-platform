@@ -7,21 +7,79 @@
   --text: #25231F;
   --muted: #6A655E;
   --line: #D8D0C2;
-  --action: #2F5A52;
-  --highlight: #B88A3B;
+
+  --primary: #2F5A52;
+  --money: #B88A3B;
+  --alert: #9B6F5D;
   --info: #6D7E8A;
-  --attention: #9B6F5D;
+  --primary-ink: #FCFAF6;
+  --shadow: rgba(70, 58, 42, 0.075);
+
+  --primary-tag-bg: #DBE0DC;
+  --primary-tag-text: #2F5A52;
+  --money-tag-bg: #ECDFC9;
+  --money-tag-text: #6A4D16;
+  --alert-tag-bg: #E7DBD4;
+  --alert-tag-text: #68483E;
+  --info-tag-bg: #E5E6E5;
+  --info-tag-text: #4D5F69;
+  --line-strong: #7E766B;
+
+  --action: var(--primary);
+  --highlight: var(--money);
+  --attention: var(--alert);
   --soft: var(--line);
-  --primary: var(--action);
-  --primary-soft: #DCE8E2;
-  --ok-text: var(--action);
-  --ok-bg: #DCE8E2;
-  --maybe-text: var(--info);
-  --maybe-bg: #E6EBEF;
-  --warn-text: var(--attention);
-  --warn-bg: #EADDD8;
-  --check-text: #8A6A2F;
-  --check-bg: #F1E7D2;
+  --primary-soft: var(--primary-tag-bg);
+  --ok-text: var(--primary-tag-text);
+  --ok-bg: var(--primary-tag-bg);
+  --maybe-text: var(--info-tag-text);
+  --maybe-bg: var(--info-tag-bg);
+  --warn-text: var(--alert-tag-text);
+  --warn-bg: var(--alert-tag-bg);
+  --check-text: var(--money-tag-text);
+  --check-bg: var(--money-tag-bg);
+  --background: var(--bg);
+  --foreground: var(--text);
+}
+
+[data-theme="night"] {
+  --bg: #2A2D2A;
+  --paper: #353937;
+  --paper-2: #404643;
+  --text: #ECE7DD;
+  --muted: #B9B2A7;
+  --line: #555C58;
+
+  --primary: #8FA79F;
+  --money: #D3B06F;
+  --alert: #C59D8B;
+  --info: #A8B5BF;
+  --primary-ink: #20251F;
+  --shadow: rgba(0, 0, 0, 0.16);
+
+  --primary-tag-bg: #303936;
+  --primary-tag-text: #8FA79F;
+  --money-tag-bg: #4B4334;
+  --money-tag-text: #D3B06F;
+  --alert-tag-bg: #403835;
+  --alert-tag-text: #C59D8B;
+  --info-tag-bg: #3D4445;
+  --info-tag-text: #A8B5BF;
+  --line-strong: #7A857F;
+
+  --action: var(--primary);
+  --highlight: var(--money);
+  --attention: var(--alert);
+  --soft: var(--line);
+  --primary-soft: var(--primary-tag-bg);
+  --ok-text: var(--primary-tag-text);
+  --ok-bg: var(--primary-tag-bg);
+  --maybe-text: var(--info-tag-text);
+  --maybe-bg: var(--info-tag-bg);
+  --warn-text: var(--alert-tag-text);
+  --warn-bg: var(--alert-tag-bg);
+  --check-text: var(--money-tag-text);
+  --check-bg: var(--money-tag-bg);
   --background: var(--bg);
   --foreground: var(--text);
 }
@@ -56,8 +114,13 @@ button {
   min-height: 100vh;
   margin: 0 auto;
   background: var(--paper-2);
-  border-left: 1px solid rgba(0, 0, 0, 0.04);
-  border-right: 1px solid rgba(0, 0, 0, 0.04);
+  border-left: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+}
+
+[data-theme="night"] .app-shell {
+  border-left-color: rgba(255, 255, 255, 0.06);
+  border-right-color: rgba(255, 255, 255, 0.06);
 }
 
 .section-card {
@@ -65,7 +128,7 @@ button {
   border-radius: 18px;
   background: var(--paper);
   padding: 15px;
-  box-shadow: 0 6px 18px rgba(55, 46, 35, 0.035);
+  box-shadow: 0 8px 22px var(--shadow);
 }
 
 .preference-chip {
@@ -75,9 +138,9 @@ button {
 }
 
 .preference-chip[aria-pressed="true"] {
-  border-color: #2F5A52;
-  background: #2F5A52;
-  color: #FCFAF6;
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-ink);
 }
 
 .info-chip {
@@ -91,28 +154,28 @@ button {
 }
 
 .info-chip-attention {
-  background: #EADDD8;
-  color: #9B6F5D;
+  background: var(--warn-bg);
+  color: var(--warn-text);
 }
 
 .info-chip-highlight {
-  background: #EFE4C9;
-  color: #8A6425;
+  background: var(--check-bg);
+  color: var(--money-tag-text);
 }
 
 .info-chip-medium {
-  background: #F1E7D2;
-  color: #8A6A2F;
+  background: var(--check-bg);
+  color: var(--check-text);
 }
 
 .info-chip-info {
-  background: #E6EBEF;
-  color: #6D7E8A;
+  background: var(--maybe-bg);
+  color: var(--maybe-text);
 }
 
 .info-chip-neutral {
-  background: #ECE5D9;
-  color: #6A655E;
+  background: var(--paper-2);
+  color: var(--muted);
 }
 
 @media (max-width: 460px) {

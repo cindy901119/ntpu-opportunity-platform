@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AuthStatus } from "./AuthStatus";
+import { ThemeToggle } from "./ThemeToggle";
 
 const items = [
   { href: "/opportunities", label: "機會" },
@@ -14,7 +15,7 @@ export function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-10 border-b border-[var(--line)] bg-[rgba(236,229,217,.92)] px-4 py-3 backdrop-blur">
+    <nav className="sticky top-0 z-10 border-b border-[var(--line)] bg-[color-mix(in_srgb,var(--paper-2)_92%,transparent)] px-4 py-3 backdrop-blur">
       <div className="mx-auto flex max-w-[760px] items-center justify-between gap-4">
         <Link href="/" className="text-lg font-semibold tracking-wide text-[var(--text)]">
           北大版機會雷達
@@ -27,13 +28,14 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={`rounded-full px-3 py-2 text-sm font-semibold ${
-                  active ? "bg-[var(--action)] text-[var(--paper)]" : "text-[var(--muted)]"
+                  active ? "bg-[var(--primary)] text-[var(--primary-ink)]" : "text-[var(--muted)]"
                 }`}
               >
                 {item.label}
               </Link>
             );
           })}
+          <ThemeToggle />
           <AuthStatus />
         </div>
       </div>
