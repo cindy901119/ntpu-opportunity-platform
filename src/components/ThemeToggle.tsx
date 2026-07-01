@@ -38,10 +38,22 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      className="rounded-full border border-[var(--line-strong)] bg-[var(--paper)] px-3 py-2 text-sm font-semibold text-[var(--muted)]"
+      className="relative inline-grid h-8 w-[58px] grid-cols-2 items-center rounded-full border border-[var(--line-strong)] bg-[var(--paper)] px-1 text-xs font-semibold text-[var(--muted)]"
       aria-label={theme === "night" ? "切換淺色模式" : "切換深色模式"}
+      aria-pressed={theme === "night"}
     >
-      {theme === "night" ? "夜" : "日"}
+      <span
+        aria-hidden="true"
+        className={`absolute top-1 h-6 w-6 rounded-full bg-[var(--primary)] transition-transform ${
+          theme === "night" ? "translate-x-[26px]" : "translate-x-0"
+        }`}
+      />
+      <span aria-hidden="true" className={`relative z-10 text-center ${theme === "night" ? "text-[var(--muted)]" : "text-[var(--primary-ink)]"}`}>
+        ☀
+      </span>
+      <span aria-hidden="true" className={`relative z-10 text-center ${theme === "night" ? "text-[var(--primary-ink)]" : "text-[var(--muted)]"}`}>
+        ☾
+      </span>
     </button>
   );
 }

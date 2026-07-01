@@ -17,9 +17,12 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-10 border-b border-[var(--line)] bg-[color-mix(in_srgb,var(--paper-2)_92%,transparent)] px-4 py-3 backdrop-blur">
       <div className="mx-auto flex max-w-[760px] items-center justify-between gap-4">
-        <Link href="/" className="text-lg font-semibold tracking-wide text-[var(--text)]">
-          北大版機會雷達
-        </Link>
+        <div className="flex min-w-0 items-center gap-2">
+          <Link href="/" className="truncate text-lg font-semibold tracking-wide text-[var(--text)]">
+            北大版機會雷達
+          </Link>
+          <ThemeToggle />
+        </div>
         <div className="flex gap-1">
           {items.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -35,7 +38,6 @@ export function Navbar() {
               </Link>
             );
           })}
-          <ThemeToggle />
           <AuthStatus />
         </div>
       </div>
