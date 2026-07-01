@@ -79,3 +79,10 @@ on public.notification_logs
 for select
 to authenticated
 using (auth.uid() = user_id);
+
+drop policy if exists "users can insert own notification logs" on public.notification_logs;
+create policy "users can insert own notification logs"
+on public.notification_logs
+for insert
+to authenticated
+with check (auth.uid() = user_id);
