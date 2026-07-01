@@ -169,7 +169,8 @@ export function AccountClient() {
     setProfile((current) => (current ? { ...current, [key]: value } : current));
   }
 
-  const isAdmin = user?.email?.toLowerCase() === adminEmail;
+  const accountEmail = user?.email ?? profile?.email ?? "";
+  const isAdmin = accountEmail.toLowerCase() === adminEmail;
 
   return (
     <main className="mx-auto max-w-[760px] px-4 py-5">
