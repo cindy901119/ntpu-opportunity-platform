@@ -383,23 +383,23 @@ function OptionalDepartmentField({
 
   return (
     <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-3">
-      <label className="flex items-center justify-between gap-3">
+      <div className="grid gap-3 sm:grid-cols-[4rem_auto_1fr] sm:items-center">
         <span className="text-sm font-semibold text-[var(--text)]">{label}</span>
-        <span className="flex items-center gap-2 text-sm font-semibold text-[var(--muted)]">
+        <label className="relative inline-flex h-7 w-12 items-center">
           <input
             type="checkbox"
             checked={enabled}
             onChange={(event) => toggle(event.target.checked)}
-            className="h-4 w-4 accent-[var(--action)]"
+            className="peer sr-only"
+            aria-label={`啟用${label}`}
           />
-          {enabled ? "有" : "沒有"}
-        </span>
-      </label>
-      {enabled ? (
-        <div className="mt-3">
-          <DepartmentCombobox label={`${label}系所`} value={value} departments={departments} onChange={onChange} compact />
-        </div>
-      ) : null}
+          <span className="absolute inset-0 rounded-full border border-[var(--line-strong)] bg-[var(--paper-2)] transition peer-checked:border-[var(--primary)] peer-checked:bg-[var(--primary)]" />
+          <span className="absolute left-1 h-5 w-5 rounded-full bg-[var(--paper)] shadow-sm transition peer-checked:translate-x-5" />
+        </label>
+        {enabled ? (
+          <DepartmentCombobox label={`${label}系所`} value={value} departments={departments} onChange={onChange} compact hideLabel />
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -410,12 +410,14 @@ function DepartmentCombobox({
   departments,
   onChange,
   compact = false,
+  hideLabel = false,
 }: {
   label: string;
   value: string;
   departments: ReturnType<typeof getDepartmentUnitsForSchool>;
   onChange: (value: string) => void;
   compact?: boolean;
+  hideLabel?: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -435,9 +437,11 @@ function DepartmentCombobox({
 
   return (
     <div className="grid gap-2">
-      <label className="text-sm font-semibold" htmlFor={`${label}-combobox`}>
-        {label}
-      </label>
+      {!hideLabel ? (
+        <label className="text-sm font-semibold" htmlFor={`${label}-combobox`}>
+          {label}
+        </label>
+      ) : null}
       <div className="relative">
         <input
           id={`${label}-combobox`}
