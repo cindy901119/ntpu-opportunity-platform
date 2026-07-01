@@ -9,11 +9,14 @@
 - 修正提醒測試信流程：寄送測試信不再被「提醒設定儲存失敗」擋住，Gmail API 成功與資料庫紀錄失敗會分開顯示。
 - 測試信 API 會回傳較明確的錯誤狀態，例如 Gmail 環境變數未設定、refresh token 授權失敗或 Gmail API 拒絕寄送。
 - 補上 `notification_logs` 的 authenticated insert RLS policy，避免測試信已寄出但寄送紀錄無法寫入。
+- 提醒 Email 改為固定使用登入帳號信箱，前台不再允許任意輸入收件地址，避免被濫用成寄信工具。
 
 ### Added
 
 - 新增 `scripts/crawler/output/check-scholarships.review.sql`，用來確認獎學金資料是否已匯入、目前狀態是否為 `published`，以及是否多數已截止而被前台預設隱藏。
 - 新增 `docs/SUPABASE_REMINDERS_RLS_FIX.sql`，可單獨修復 reminder / notification logs 的 RLS policy。
+- 新增 `docs/SUPABASE_SAVED_COMPETITIONS_FIX.sql`，可修復雲端收藏同步需要的資料表與 RLS policy。
+- 新增 `docs/SCHOLARSHIP_IMPORT_CHECKLIST.md`，整理獎學金匯入與檢查順序。
 
 ## v0.10-B - 2026-06-30
 

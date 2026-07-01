@@ -116,12 +116,11 @@ export function ReminderControl({ opportunityId }: { opportunityId: string }) {
             <input
               type="email"
               value={setting.notificationEmail}
-              onChange={(event) => setSetting((current) => ({ ...current, notificationEmail: event.target.value, emailVerified: false }))}
-              className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-3 py-3 text-sm font-semibold text-[var(--text)]"
-              placeholder="you@example.com"
+              readOnly
+              className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] px-3 py-3 text-sm font-semibold text-[var(--muted)]"
             />
             <span className="text-xs font-semibold text-[var(--muted)]">
-              {setting.emailVerified ? "這個 Email 已通過測試信。" : "寄送測試信後，才會標記為已驗證。"}
+              {setting.emailVerified ? "登入信箱已通過測試信。" : "提醒只會寄到登入信箱，避免被用來寄送非本人 Email。"}
             </span>
           </label>
 

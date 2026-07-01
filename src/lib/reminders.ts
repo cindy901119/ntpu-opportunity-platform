@@ -66,7 +66,7 @@ export async function getReminderSetting(opportunityId: string) {
       remindEnabled: row.remind_enabled,
       remindDaysBefore: row.remind_days_before ?? [30, 14],
       preferredSendTime: row.preferred_send_time?.slice(0, 5) ?? "09:00",
-      notificationEmail: row.notification_email ?? user.email ?? "",
+      notificationEmail: user.email ?? row.notification_email ?? "",
       emailVerified: row.email_verified ?? false,
     },
   };
@@ -86,7 +86,7 @@ export async function saveReminderSetting(setting: ReminderSetting) {
       remind_enabled: setting.remindEnabled,
       remind_days_before: setting.remindDaysBefore,
       preferred_send_time: setting.preferredSendTime || "09:00",
-      notification_email: setting.notificationEmail || user.email || null,
+      notification_email: user.email || null,
       email_verified: setting.emailVerified,
       updated_at: new Date().toISOString(),
     },
@@ -118,7 +118,7 @@ export async function sendReminderTestEmail(setting: ReminderSetting) {
     },
     body: JSON.stringify({
       opportunityId: setting.opportunityId,
-      email: setting.notificationEmail,
+      email: user.email ?? "",
     }),
   });
 
