@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "北大版機會雷達",
-  description: "北大學生的機會推薦 Web App",
+  title: "鳶來有獎｜專屬北大人的 AI 獎助補助導航系統",
+  description: "專屬北大人的 AI 獎助補助導航系統",
 };
 
 export default function RootLayout({

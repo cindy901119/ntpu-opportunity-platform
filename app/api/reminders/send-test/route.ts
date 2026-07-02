@@ -59,11 +59,11 @@ export async function POST(request: Request) {
   try {
     const result = await sendGmailMessage({
       to: email,
-      subject: "北大機會雷達提醒測試信",
+      subject: "鳶來有獎提醒測試信",
       text: [
         "這是一封提醒測試信。",
         "",
-        "如果你收到這封信，代表這個 Email 可以接收北大機會雷達的提醒。",
+        "如果你收到這封信，代表這個 Email 可以接收鳶來有獎的提醒。",
         "正式提醒會依照你在機會詳情頁設定的提前天數與寄送時間寄出。",
         "",
         "這不是報名催促，也不會取代官方簡章。報名前仍請確認官方規則。",

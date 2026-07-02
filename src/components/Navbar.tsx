@@ -19,7 +19,7 @@ export function Navbar() {
       <div className="mx-auto flex max-w-[760px] items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-2">
           <Link href="/" className="truncate text-lg font-semibold tracking-wide text-[var(--text)]">
-            北大版機會雷達
+            鳶來有獎
           </Link>
           <ThemeToggle />
         </div>
